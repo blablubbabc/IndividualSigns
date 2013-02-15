@@ -57,7 +57,7 @@ public class InSigns extends JavaPlugin implements Listener {
 			public void onPacketSending(PacketEvent event) {
 				if (event.getPacketID() == 0x82) {
 					try {
-						modify(event.getPacket(), event.getPlayer().getName());
+						event.setPacket(modify(event.getPacket(), event.getPlayer().getName()));
 					} catch (FieldAccessException e) {
 						getLogger().log(Level.SEVERE, "Couldn't access field.", e);
 					}
@@ -72,9 +72,11 @@ public class InSigns extends JavaPlugin implements Listener {
 		System.out.println(this.toString() + " disabled");
 	}
 
-	private void modify(PacketContainer psign, String playerName) {
+	private PacketContainer modify(PacketContainer psign, String playerName) {
 		Packet82UpdateSign incoming = new Packet82UpdateSign(psign);
+		Packet82UpdateSign outgoing = new Packet82UpdateSign();
 		String[] lines = incoming.getLines();
+		String[] newLines = { lines[0], lines[1], lines[2], lines[3] };
 		String value;
 		String key;
 		for (Changer c : changerList) {
@@ -82,15 +84,20 @@ public class InSigns extends JavaPlugin implements Listener {
 			key = c.getKey();
 			if (key == null || value == null)
 				continue;
-			for (int i = 0; i < lines.length; i++) {
-				lines[i] = lines[i].replace(key, value);
+			for (int i = 0; i < newLines.length; i++) {
+				newLines[i] = newLines[i].replace(key, value);
 			}
 		}
 		// checking length:
-		for (int i = 0; i < lines.length; i++) {
-			if (lines[i].length() > 15)
-				lines[i] = lines[i].substring(0, 15);
+		for (int i = 0; i < newLines.length; i++) {
+			if (newLines[i].length() > 15)
+				newLines[i] = newLines[i].substring(0, 15);
 		}
+		outgoing.setX(incoming.getX());
+		outgoing.setY(incoming.getY());
+		outgoing.setZ(incoming.getZ());
+		outgoing.setLines(newLines);
+		return outgoing.getHandle();
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
