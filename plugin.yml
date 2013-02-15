@@ -1,6 +1,10 @@
 name: InSigns
-main: me.blablubbabc.insigns.InSigns
-version: 0.8
+main: de.blablubbabc.insigns.InSigns
+version: 0.9
 author: blablubbabc
-description: Individual sign texts for every player visible.
+description: Displays the text on signs for each player individual differently.
 depend: [ProtocolLib]
+permissions:
+  insigns.create.player:
+    description: Ability to create signs displaying individual player names.
+    default: true
