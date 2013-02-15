@@ -1,0 +1,6 @@
+name: InSigns
+main: me.blablubbabc.insigns.InSigns
+version: 0.8
+author: blablubbabc
+description: Individual sign texts for every player visible.
+depend: [ProtocolLib]
