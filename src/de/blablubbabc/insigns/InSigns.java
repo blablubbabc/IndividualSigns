@@ -30,7 +30,6 @@ import com.comphenix.protocol.reflect.FieldAccessException;
 public class InSigns extends JavaPlugin implements Listener {
 
 	private List<Changer> changerList;
-	private Changer playerChanger;
 	private ProtocolManager protocolManager;
 
 	public void onLoad() {
@@ -43,14 +42,13 @@ public class InSigns extends JavaPlugin implements Listener {
 		changerList = new ArrayList<Changer>();
 		// Default Changers:
 		// [PLAYER] -> insigns.create.player
-		playerChanger = new Changer("[PLAYER]") {
+		addChanger(new Changer("[PLAYER]", "insigns.create.player") {
 
 			@Override
 			public String getValue(String playerName) {
 				return playerName;
 			}
-		};
-		addChanger(playerChanger);
+		});
 
 		// PACKETLISTENER
 		protocolManager.addPacketListener(new PacketAdapter(this, ConnectionSide.SERVER_SIDE,
@@ -99,15 +97,19 @@ public class InSigns extends JavaPlugin implements Listener {
 	public void onSignCreate(SignChangeEvent event) {
 		Player player = event.getPlayer();
 		String[] lines = event.getLines();
-		String key = playerChanger.getKey();
+		String key;
+		String perm;
 		for (String l : lines) {
-			if (l.contains(key)) {
-				if (!player.hasPermission("insigns.create.player")) {
-					event.setCancelled(true);
-					player.sendMessage(ChatColor.RED + "No permission to use '" + key
-							+ "' on your sign.");
-					player.sendMessage(ChatColor.RED
-							+ "Missing Permission: 'insigns.create.player'");
+			for (Changer changer : changerList) {
+				key = changer.getKey();
+				perm = changer.getPerm();
+				if (l.contains(key)) {
+					if (!player.hasPermission(perm)) {
+						event.setCancelled(true);
+						player.sendMessage(ChatColor.RED + "No permission to use '" + key
+								+ "' on your sign.");
+						player.sendMessage(ChatColor.RED + "Missing Permission: '" + perm + "'");
+					}
 				}
 			}
 		}
