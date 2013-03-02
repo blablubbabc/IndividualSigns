@@ -51,8 +51,7 @@ public class InSigns extends JavaPlugin implements Listener {
 		});
 
 		// PACKETLISTENER
-		protocolManager.addPacketListener(new PacketAdapter(this, ConnectionSide.SERVER_SIDE,
-				ListenerPriority.NORMAL, 0x82) {
+		protocolManager.addPacketListener(new PacketAdapter(this, ConnectionSide.SERVER_SIDE, ListenerPriority.NORMAL, 0x82) {
 			@Override
 			public void onPacketSending(PacketEvent event) {
 				if (event.getPacketID() == 0x82) {
@@ -77,21 +76,31 @@ public class InSigns extends JavaPlugin implements Listener {
 		Packet82UpdateSign outgoing = new Packet82UpdateSign();
 		String[] lines = incoming.getLines();
 		String[] newLines = { lines[0], lines[1], lines[2], lines[3] };
-		String value;
-		String key;
+		String value = null;
+		String key = null;
 		for (Changer c : changerList) {
-			value = c.getValue(playerName);
 			key = c.getKey();
-			if (key == null || value == null)
+			if (key == null)
 				continue;
 			for (int i = 0; i < newLines.length; i++) {
-				newLines[i] = newLines[i].replace(key, value);
+				if (newLines[i].contains(key)) {
+					if (value == null) {
+						value = c.getValue(playerName);
+						if (value == null)
+							break;
+					}
+					newLines[i] = newLines[i].replace(key, value);
+				}
 			}
 		}
 		// checking length:
 		for (int i = 0; i < newLines.length; i++) {
-			if (newLines[i].length() > 15)
+			if (newLines[i].length() > 15) {
+				if (i < newLines.length - 1 && newLines[i + 1].isEmpty()) {
+					newLines[i + 1] = newLines[i].substring(15);
+				}
 				newLines[i] = newLines[i].substring(0, 15);
+			}
 		}
 		outgoing.setX(incoming.getX());
 		outgoing.setY(incoming.getY());
@@ -113,8 +122,7 @@ public class InSigns extends JavaPlugin implements Listener {
 				if (l.contains(key)) {
 					if (!player.hasPermission(perm)) {
 						event.setCancelled(true);
-						player.sendMessage(ChatColor.RED + "No permission to use '" + key
-								+ "' on your sign.");
+						player.sendMessage(ChatColor.RED + "No permission to use '" + key + "' on your sign.");
 						player.sendMessage(ChatColor.RED + "Missing Permission: '" + perm + "'");
 					}
 				}

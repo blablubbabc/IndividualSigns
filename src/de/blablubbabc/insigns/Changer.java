@@ -18,8 +18,9 @@ public abstract class Changer {
 	 */
 	public Changer(String key, String permission) {
 		if (key == null || permission == null)
-			throw new IllegalArgumentException(
-					"The key and the permissions node inside the Changer constructor must not be null!");
+			throw new IllegalArgumentException("The key and the permissions node inside the Changer constructor must not be null!");
+		if (key.length() > 15)
+			throw new IllegalArgumentException("The key inside the Changer constructor must not be longer then 15!");
 		this.key = key;
 		this.perm = permission;
 	}
