@@ -1,5 +1,7 @@
 package de.blablubbabc.insigns;
 
+import org.bukkit.entity.Player;
+
 public abstract class Changer {
 
 	private final String key;
@@ -47,10 +49,10 @@ public abstract class Changer {
 	/**
 	 * Get the value which replaces the key.
 	 * 
-	 * @param playerName
-	 *            the name of the player looking at the sign
+	 * @param player
+	 *            the player looking at the sign
 	 * @return the text which replaces the text on the sign
 	 */
-	public abstract String getValue(String playerName);
+	public abstract String getValue(Player player);
 
 }

@@ -45,8 +45,8 @@ public class InSigns extends JavaPlugin implements Listener {
 		addChanger(new Changer("[PLAYER]", "insigns.create.player") {
 
 			@Override
-			public String getValue(String playerName) {
-				return playerName;
+			public String getValue(Player player) {
+				return player.getName();
 			}
 		});
 
@@ -56,7 +56,7 @@ public class InSigns extends JavaPlugin implements Listener {
 			public void onPacketSending(PacketEvent event) {
 				if (event.getPacketID() == 0x82) {
 					try {
-						event.setPacket(modify(event.getPacket(), event.getPlayer().getName()));
+						event.setPacket(modify(event.getPacket(), event.getPlayer()));
 					} catch (FieldAccessException e) {
 						getLogger().log(Level.SEVERE, "Couldn't access field.", e);
 					}
@@ -71,7 +71,7 @@ public class InSigns extends JavaPlugin implements Listener {
 		System.out.println(this.toString() + " disabled");
 	}
 
-	private PacketContainer modify(PacketContainer psign, String playerName) {
+	private PacketContainer modify(PacketContainer psign, Player player) {
 		Packet82UpdateSign incoming = new Packet82UpdateSign(psign);
 		Packet82UpdateSign outgoing = new Packet82UpdateSign();
 		String[] lines = incoming.getLines();
@@ -85,7 +85,7 @@ public class InSigns extends JavaPlugin implements Listener {
 			for (int i = 0; i < newLines.length; i++) {
 				if (newLines[i].contains(key)) {
 					if (value == null) {
-						value = c.getValue(playerName);
+						value = c.getValue(player);
 						if (value == null)
 							break;
 					}
