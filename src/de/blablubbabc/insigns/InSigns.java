@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
@@ -45,7 +46,7 @@ public class InSigns extends JavaPlugin implements Listener {
 		addChanger(new Changer("[PLAYER]", "insigns.create.player") {
 
 			@Override
-			public String getValue(Player player) {
+			public String getValue(Player player, Location location) {
 				return player.getName();
 			}
 		});
@@ -74,8 +75,15 @@ public class InSigns extends JavaPlugin implements Listener {
 	private PacketContainer modify(PacketContainer psign, Player player) {
 		Packet82UpdateSign incoming = new Packet82UpdateSign(psign);
 		Packet82UpdateSign outgoing = new Packet82UpdateSign();
+		
+		Location location = new Location(player.getWorld(), incoming.getX(), incoming.getY(), incoming.getZ());
+		
 		String[] lines = incoming.getLines();
 		String[] newLines = { lines[0], lines[1], lines[2], lines[3] };
+		
+		/*SignSendEvent signEvent = new SignSendEvent(player, location, newLines);
+		getServer().getPluginManager().callEvent(signEvent);*/
+		
 		String value = null;
 		String key = null;
 		for (Changer c : changerList) {
@@ -85,7 +93,7 @@ public class InSigns extends JavaPlugin implements Listener {
 			for (int i = 0; i < newLines.length; i++) {
 				if (newLines[i].contains(key)) {
 					if (value == null) {
-						value = c.getValue(player);
+						value = c.getValue(player, location);
 						if (value == null)
 							break;
 					}

@@ -1,5 +1,6 @@
 package de.blablubbabc.insigns;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public abstract class Changer {
@@ -53,6 +54,6 @@ public abstract class Changer {
 	 *            the player looking at the sign
 	 * @return the text which replaces the text on the sign
 	 */
-	public abstract String getValue(Player player);
+	public abstract String getValue(Player player, Location location);
 
 }
