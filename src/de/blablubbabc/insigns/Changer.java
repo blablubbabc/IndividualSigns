@@ -54,6 +54,6 @@ public abstract class Changer {
 	 *            the player looking at the sign
 	 * @return the text which replaces the text on the sign
 	 */
-	public abstract String getValue(Player player, Location location);
+	public abstract String getValue(final Player player, final Location location);
 
 }

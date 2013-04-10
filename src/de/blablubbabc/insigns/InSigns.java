@@ -46,7 +46,7 @@ public class InSigns extends JavaPlugin implements Listener {
 		addChanger(new Changer("[PLAYER]", "insigns.create.player") {
 
 			@Override
-			public String getValue(Player player, Location location) {
+			public String getValue(final Player player, final Location location) {
 				return player.getName();
 			}
 		});
