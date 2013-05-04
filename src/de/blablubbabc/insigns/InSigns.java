@@ -88,6 +88,7 @@ public class InSigns extends JavaPlugin implements Listener {
 		String value = null;
 		String key = null;
 		for (Changer c : changerList) {
+			value = null;
 			key = c.getKey();
 			if (key == null)
 				continue;
