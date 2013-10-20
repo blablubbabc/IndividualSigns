@@ -7,8 +7,8 @@ import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -144,9 +144,9 @@ public class InSigns extends JavaPlugin implements Listener {
 	public void onInteract(PlayerInteractEvent event) {
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null) {
 			Block block = event.getClickedBlock();
-			BlockState state = block.getState();
-			if (state instanceof Sign) {
-				Sign sign = (Sign) state;
+			Material blockType = block.getType();
+			if (blockType == Material.WALL_SIGN || blockType == Material.SIGN_POST) {
+				Sign sign = (Sign) block.getState();
 				sendSignChange(event.getPlayer(), sign);
 			}
 		}
