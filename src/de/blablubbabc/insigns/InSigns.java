@@ -76,15 +76,17 @@ public class InSigns extends JavaPlugin implements Listener {
 	private PacketContainer modify(PacketContainer psign, Player player) {
 		Packet82UpdateSign incoming = new Packet82UpdateSign(psign);
 		Packet82UpdateSign outgoing = new Packet82UpdateSign();
-		
+
 		Location location = new Location(player.getWorld(), incoming.getX(), incoming.getY(), incoming.getZ());
-		
+
 		String[] lines = incoming.getLines();
 		String[] newLines = { lines[0], lines[1], lines[2], lines[3] };
-		
-		/*SignSendEvent signEvent = new SignSendEvent(player, location, newLines);
-		getServer().getPluginManager().callEvent(signEvent);*/
-		
+
+		/*
+		 * SignSendEvent signEvent = new SignSendEvent(player, location, newLines);
+		 * getServer().getPluginManager().callEvent(signEvent);
+		 */
+
 		String value = null;
 		String key = null;
 		for (Changer c : changerList) {
@@ -153,9 +155,9 @@ public class InSigns extends JavaPlugin implements Listener {
 	}
 
 	/**
-	 * Returns the list of all registered Changers.
+	 * gets the list of all registered Changers.
 	 * 
-	 * @return list of all Changers
+	 * @return a list of all Changers
 	 */
 	public synchronized List<Changer> getChangerList() {
 		return changerList;
@@ -163,9 +165,8 @@ public class InSigns extends JavaPlugin implements Listener {
 
 	// API
 	/**
-	 * Sends a UpdateSign-Packet to this, and only this, player. The player must
-	 * be a valid online player! This is used to update a sign for a specified
-	 * user only.
+	 * Sends a UpdateSign-Packet to this, and only this, player. The player must be a valid online player! This is used
+	 * to update a sign for a specified user only.
 	 * 
 	 * @param player
 	 *            the player receiving the sign update
@@ -198,14 +199,12 @@ public class InSigns extends JavaPlugin implements Listener {
 	}
 
 	/**
-	 * Registers a Changer. By adding a Changer, text on signs that matches the
-	 * key of this Changer will get replaced with the individual value specified
-	 * by the Changers getValue() method. This will remove all active Changers
-	 * with an equal key.
+	 * Registers a Changer. By adding a Changer, text on signs that matches the key of this Changer will get replaced
+	 * with the individual value specified by the Changers getValue() method. This will remove all active Changers with
+	 * an equal key.
 	 * 
 	 * @param changer
-	 *            this Changer is used to specify which text should be replaced
-	 *            with what other text on signs
+	 *            this Changer is used to specify which text should be replaced with what other text on signs
 	 */
 	public synchronized void addChanger(Changer changer) {
 		if (changer == null) {
