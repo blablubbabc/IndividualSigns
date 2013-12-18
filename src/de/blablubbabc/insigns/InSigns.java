@@ -95,13 +95,22 @@ public class InSigns extends JavaPlugin implements Listener {
 			value = null;
 			key = c.getKey();
 			if (key == null) continue;
+
 			for (int i = 0; i < lines.length; i++) {
 				if (lines[i].contains(key)) {
-					modified = true;
+					// only copy the lines array if necessary:
+					if (!modified) {
+						modified = true;
+						lines = new String[] { lines[0], lines[1], lines[2], lines[3] };
+					}
+
+					// get new value once:
 					if (value == null) {
 						value = c.getValue(player, location);
 						if (value == null) break;
 					}
+
+					// set new value:
 					lines[i] = lines[i].replace(key, value);
 				}
 			}
@@ -120,8 +129,7 @@ public class InSigns extends JavaPlugin implements Listener {
 
 			// prepare new packet:
 			PacketUpdateSignWrapper outgoing = new PacketUpdateSignWrapper(psign.shallowClone());
-			String[] newLines = { lines[0], lines[1], lines[2], lines[3] };
-			outgoing.setLines(newLines);
+			outgoing.setLines(lines);
 
 			return outgoing.getPacket();
 		} else {
