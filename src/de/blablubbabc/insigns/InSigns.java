@@ -19,10 +19,9 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.comphenix.packetwrapper.Packet82UpdateSign;
+import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.ConnectionSide;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
@@ -34,10 +33,12 @@ public class InSigns extends JavaPlugin implements Listener {
 	private List<Changer> changerList;
 	private ProtocolManager protocolManager;
 
+	@Override
 	public void onLoad() {
 		protocolManager = ProtocolLibrary.getProtocolManager();
 	}
 
+	@Override
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(this, this);
 
@@ -53,15 +54,13 @@ public class InSigns extends JavaPlugin implements Listener {
 		});
 
 		// PACKETLISTENER
-		protocolManager.addPacketListener(new PacketAdapter(this, ConnectionSide.SERVER_SIDE, ListenerPriority.NORMAL, 0x82) {
+		protocolManager.addPacketListener(new PacketAdapter(this, ListenerPriority.NORMAL, PacketType.Play.Server.UPDATE_SIGN) {
 			@Override
 			public void onPacketSending(PacketEvent event) {
-				if (event.getPacketID() == 0x82) {
-					try {
-						event.setPacket(modify(event.getPacket(), event.getPlayer()));
-					} catch (FieldAccessException e) {
-						getLogger().log(Level.SEVERE, "Couldn't access field.", e);
-					}
+				try {
+					event.setPacket(modify(event.getPacket(), event.getPlayer()));
+				} catch (FieldAccessException e) {
+					getLogger().log(Level.SEVERE, "Couldn't access field.", e);
 				}
 			}
 		});
@@ -69,56 +68,65 @@ public class InSigns extends JavaPlugin implements Listener {
 		System.out.println(this.toString() + " enabled");
 	}
 
+	@Override
 	public void onDisable() {
 		System.out.println(this.toString() + " disabled");
 	}
 
 	private PacketContainer modify(PacketContainer psign, Player player) {
-		Packet82UpdateSign incoming = new Packet82UpdateSign(psign);
-		Packet82UpdateSign outgoing = new Packet82UpdateSign();
+		PacketUpdateSignWrapper incoming = new PacketUpdateSignWrapper(psign);
 
 		Location location = new Location(player.getWorld(), incoming.getX(), incoming.getY(), incoming.getZ());
 
 		String[] lines = incoming.getLines();
-		String[] newLines = { lines[0], lines[1], lines[2], lines[3] };
 
 		/*
-		 * SignSendEvent signEvent = new SignSendEvent(player, location, newLines);
+		 * Maybe use the bukkit event system at a later state: SignSendEvent signEvent = new
+		 * SignSendEvent(player, location, newLines);
 		 * getServer().getPluginManager().callEvent(signEvent);
 		 */
+
+		// the packet only needs to be cloned, if it has to be modified
+		boolean modified = false;
 
 		String value = null;
 		String key = null;
 		for (Changer c : changerList) {
 			value = null;
 			key = c.getKey();
-			if (key == null)
-				continue;
-			for (int i = 0; i < newLines.length; i++) {
-				if (newLines[i].contains(key)) {
+			if (key == null) continue;
+			for (int i = 0; i < lines.length; i++) {
+				if (lines[i].contains(key)) {
+					modified = true;
 					if (value == null) {
 						value = c.getValue(player, location);
-						if (value == null)
-							break;
+						if (value == null) break;
 					}
-					newLines[i] = newLines[i].replace(key, value);
+					lines[i] = lines[i].replace(key, value);
 				}
 			}
 		}
-		// checking length:
-		for (int i = 0; i < newLines.length; i++) {
-			if (newLines[i].length() > 15) {
-				if (i < newLines.length - 1 && newLines[i + 1].isEmpty()) {
-					newLines[i + 1] = newLines[i].substring(15);
+
+		if (modified) {
+			// checking length:
+			for (int i = 0; i < lines.length; i++) {
+				if (lines[i].length() > 15) {
+					if (i < lines.length - 1 && lines[i + 1].isEmpty()) {
+						lines[i + 1] = lines[i].substring(15);
+					}
+					lines[i] = lines[i].substring(0, 15);
 				}
-				newLines[i] = newLines[i].substring(0, 15);
 			}
+
+			// prepare new packet:
+			PacketUpdateSignWrapper outgoing = new PacketUpdateSignWrapper(psign.shallowClone());
+			String[] newLines = { lines[0], lines[1], lines[2], lines[3] };
+			outgoing.setLines(newLines);
+
+			return outgoing.getPacket();
+		} else {
+			return psign;
 		}
-		outgoing.setX(incoming.getX());
-		outgoing.setY(incoming.getY());
-		outgoing.setZ(incoming.getZ());
-		outgoing.setLines(newLines);
-		return outgoing.getHandle();
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -155,7 +163,7 @@ public class InSigns extends JavaPlugin implements Listener {
 	}
 
 	/**
-	 * gets the list of all registered Changers.
+	 * Gets the list of all registered Changers.
 	 * 
 	 * @return a list of all Changers
 	 */
@@ -165,8 +173,8 @@ public class InSigns extends JavaPlugin implements Listener {
 
 	// API
 	/**
-	 * Sends a UpdateSign-Packet to this, and only this, player. The player must be a valid online player! This is used
-	 * to update a sign for a specified user only.
+	 * Sends a UpdateSign-Packet to this, and only this, player. The player must be a valid online
+	 * player! This is used to update a sign for a specified user only.
 	 * 
 	 * @param player
 	 *            the player receiving the sign update
@@ -174,13 +182,13 @@ public class InSigns extends JavaPlugin implements Listener {
 	 *            the sign to send
 	 */
 	public void sendSignChange(Player player, Sign sign) {
-		String[] lin = sign.getLines();
-		PacketContainer result = protocolManager.createPacket(0x82);
+		String[] lines = sign.getLines();
+		PacketContainer result = protocolManager.createPacket(PacketType.Play.Server.UPDATE_SIGN);
 		try {
 			result.getSpecificModifier(int.class).write(0, sign.getX());
 			result.getSpecificModifier(int.class).write(1, sign.getY());
 			result.getSpecificModifier(int.class).write(2, sign.getZ());
-			result.getStringArrays().write(0, lin);
+			result.getStringArrays().write(0, lines);
 			protocolManager.sendServerPacket(player, result);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -199,12 +207,13 @@ public class InSigns extends JavaPlugin implements Listener {
 	}
 
 	/**
-	 * Registers a Changer. By adding a Changer, text on signs that matches the key of this Changer will get replaced
-	 * with the individual value specified by the Changers getValue() method. This will remove all active Changers with
-	 * an equal key.
+	 * Registers a Changer. By adding a Changer, text on signs that matches the key of this Changer
+	 * will get replaced with the individual value specified by the Changers getValue() method. This
+	 * will remove all active Changers with an equal key.
 	 * 
 	 * @param changer
-	 *            this Changer is used to specify which text should be replaced with what other text on signs
+	 *            this Changer is used to specify which text should be replaced with what other text
+	 *            on signs
 	 */
 	public synchronized void addChanger(Changer changer) {
 		if (changer == null) {
