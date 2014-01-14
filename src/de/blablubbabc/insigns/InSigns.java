@@ -1,5 +1,6 @@
 package de.blablubbabc.insigns;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -90,6 +91,15 @@ public class InSigns extends JavaPlugin implements Listener {
 				}
 			}
 		});
+
+		if (getConfig().getBoolean("metrics-stats", true)) {
+			try {
+			    MetricsLite metrics = new MetricsLite(this);
+			    metrics.start();
+			} catch (IOException e) {
+			    // Failed to submit the stats :-(
+			}
+		}
 
 		this.getLogger().info(this.getDescription().getVersion() + " enabled.");
 	}
