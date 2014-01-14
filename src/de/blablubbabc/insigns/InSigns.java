@@ -30,7 +30,7 @@ public class InSigns extends JavaPlugin implements Listener {
 
 	@Deprecated
 	private Map<Changer, SimpleChanger> changers = new HashMap<Changer, SimpleChanger>();
-	private ProtocolManager protocolManager;
+	private static ProtocolManager protocolManager;
 
 	@Override
 	public void onLoad() {
@@ -96,6 +96,7 @@ public class InSigns extends JavaPlugin implements Listener {
 
 	@Override
 	public void onDisable() {
+		protocolManager = null;
 		this.getLogger().info(this.getDescription().getVersion() + " disabled.");
 	}
 
@@ -131,7 +132,7 @@ public class InSigns extends JavaPlugin implements Listener {
 	 * @param sign
 	 *            the sign to send
 	 */
-	public void sendSignChange(Player player, Sign sign) {
+	public static void sendSignChange(Player player, Sign sign) {
 		String[] lines = sign.getLines();
 		PacketContainer result = protocolManager.createPacket(PacketType.Play.Server.UPDATE_SIGN);
 		try {
