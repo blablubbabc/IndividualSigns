@@ -94,7 +94,7 @@ public class SignSendEvent extends Event implements Cancellable {
 			this.modified = true;
 			this.lines = new String[] { this.lines[0], this.lines[1], this.lines[2], this.lines[3] };
 		}
-
+		this.lines[index] = line;
 	}
 
 	@Override
