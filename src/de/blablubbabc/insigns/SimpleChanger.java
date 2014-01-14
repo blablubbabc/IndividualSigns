@@ -32,7 +32,7 @@ public abstract class SimpleChanger implements Listener {
 
 	public abstract String getValue(Player player, Location location, String originalLine);
 
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onSignSend(SignSendEvent event) {
 		for (int i = 0; i < 4; i++) {
 			String line = event.getLine(i);
