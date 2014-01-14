@@ -34,12 +34,9 @@ public class InSigns extends JavaPlugin implements Listener {
 	private static ProtocolManager protocolManager;
 
 	@Override
-	public void onLoad() {
-		protocolManager = ProtocolLibrary.getProtocolManager();
-	}
-
-	@Override
 	public void onEnable() {
+		protocolManager = ProtocolLibrary.getProtocolManager();
+
 		this.getServer().getPluginManager().registerEvents(this, this);
 
 		// default replacements:
