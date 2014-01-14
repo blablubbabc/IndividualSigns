@@ -124,8 +124,8 @@ public class InSigns extends JavaPlugin implements Listener {
 	}
 
 	/**
-	 * Sends a UpdateSign-Packet to this, and only this, player. The player must be a valid online
-	 * player! This is used to update a sign for a specified user only.
+	 * Sends a UpdateSign-Packet to the specified player. This is used to update a sign for the
+	 * specified user only.
 	 * 
 	 * @param player
 	 *            the player receiving the sign update
@@ -133,6 +133,8 @@ public class InSigns extends JavaPlugin implements Listener {
 	 *            the sign to send
 	 */
 	public static void sendSignChange(Player player, Sign sign) {
+		if (player == null || !player.isOnline()) return;
+		if (sign == null) return;
 		String[] lines = sign.getLines();
 		PacketContainer result = protocolManager.createPacket(PacketType.Play.Server.UPDATE_SIGN);
 		try {
@@ -143,7 +145,6 @@ public class InSigns extends JavaPlugin implements Listener {
 			protocolManager.sendServerPacket(player, result);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return;
 		}
 	}
 
@@ -175,7 +176,7 @@ public class InSigns extends JavaPlugin implements Listener {
 		}
 		// for now to keep compatible to the older api: create adapter sign send listeners:
 		SimpleChanger oldChangerAdapter = changers.put(changer, new SimpleChanger(this, changer.getKey(), changer.getPerm()) {
-			
+
 			@Override
 			public String getValue(Player player, Location location, String originalLine) {
 				return changer.getValue(player, location);
