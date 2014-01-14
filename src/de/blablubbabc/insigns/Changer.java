@@ -3,27 +3,28 @@ package de.blablubbabc.insigns;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+@Deprecated
 public abstract class Changer {
 
 	private final String key;
 	private final String perm;
 
 	/**
-	 * Creates a new Changer. A Changer is used to specify which text should be
-	 * replaced with what other text on signs. Additional it holds a permission
-	 * node for which is automatically checked on sign creation.
+	 * Creates a new Changer. A Changer is used to specify which text should be replaced with what
+	 * other text on signs. Additional it holds a permission node for which is automatically checked
+	 * on sign creation.
 	 * 
 	 * @param key
 	 *            This will later be replaced on the signs.
 	 * @param permission
-	 *            This is the permissions node a player needs to be able to
-	 *            create a sign with the key on it.
+	 *            This is the permissions node a player needs to be able to create a sign with the
+	 *            key on it.
 	 */
+	@Deprecated
 	public Changer(String key, String permission) {
 		if (key == null || permission == null)
 			throw new IllegalArgumentException("The key and the permissions node inside the Changer constructor must not be null!");
-		if (key.length() > 15)
-			throw new IllegalArgumentException("The key inside the Changer constructor must not be longer then 15!");
+		if (key.length() > 15) throw new IllegalArgumentException("The key inside the Changer constructor must not be longer then 15!");
 		this.key = key;
 		this.perm = permission;
 	}
@@ -38,8 +39,8 @@ public abstract class Changer {
 	}
 
 	/**
-	 * Returns the permission node which is need to create a sign with the key
-	 * of this Changer on it.
+	 * Returns the permission node which is need to create a sign with the key of this Changer on
+	 * it.
 	 * 
 	 * @return the needed permissions node
 	 */
