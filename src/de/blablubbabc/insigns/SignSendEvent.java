@@ -89,6 +89,8 @@ public class SignSendEvent extends Event implements Cancellable {
 	 */
 	public void setLine(int index, String line) throws IndexOutOfBoundsException {
 		if (line == null) line = "";
+		// ignore, if the line wasn't actually changed:
+		if (line.equals(this.lines[index])) return;
 		// only copy the string array if really needed:
 		if (!this.modified) {
 			this.modified = true;
