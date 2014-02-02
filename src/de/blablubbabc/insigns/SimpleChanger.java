@@ -52,6 +52,7 @@ public abstract class SimpleChanger implements Listener {
 					event.setCancelled(true);
 					player.sendMessage(ChatColor.RED + "No permission to use '" + this.key + "' on your sign.");
 					player.sendMessage(ChatColor.RED + "Missing Permission: '" + this.permissionsNode + "'");
+					return;
 				}
 			}
 		}
