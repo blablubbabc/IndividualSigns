@@ -142,7 +142,8 @@ public class InSigns extends JavaPlugin implements Listener {
 	public static void sendSignChange(Player player, Sign sign) {
 		if (player == null || !player.isOnline()) return;
 		if (sign == null) return;
-		String[] lines = sign.getLines();
+		player.sendSignChange(sign.getLocation(), sign.getLines());
+		/*String[] lines = sign.getLines();
 		PacketContainer result = protocolManager.createPacket(PacketType.Play.Server.UPDATE_SIGN);
 		try {
 			result.getSpecificModifier(int.class).write(0, sign.getX());
@@ -152,7 +153,7 @@ public class InSigns extends JavaPlugin implements Listener {
 			protocolManager.sendServerPacket(player, result);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 	/**
