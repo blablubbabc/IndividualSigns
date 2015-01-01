@@ -42,13 +42,23 @@ public class InSigns extends JavaPlugin implements Listener {
 
 		// default replacements:
 
-		// [PLAYER] -> playerName
+		// [PLAYER] -> player's name
 		// permission: insigns.create.player
 		new SimpleChanger(this, "[PLAYER]", "insigns.create.player") {
 
 			@Override
 			public String getValue(Player player, Location location, String originalLine) {
 				return player.getName();
+			}
+		};
+
+		// [DISPLAY] -> player's display/nick name
+		// permission: insigns.create.displayname
+		new SimpleChanger(this, "[DISPLAY]", "insigns.create.display") {
+
+			@Override
+			public String getValue(Player player, Location location, String originalLine) {
+				return player.getDisplayName();
 			}
 		};
 
