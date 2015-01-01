@@ -72,14 +72,16 @@ public class InSigns extends JavaPlugin implements Listener {
 					if (signEvent.isModified()) {
 						String[] lines = signEvent.getLines();
 						// checking line lengths and moving text into the next lines if appropriate:
-						for (int i = 0; i < lines.length; i++) {
-							if (lines[i].length() > 15) {
-								if (i < lines.length - 1 && lines[i + 1].isEmpty()) {
-									lines[i + 1] = lines[i].substring(15);
-								}
-								lines[i] = lines[i].substring(0, 15);
-							}
-						}
+						/*
+						 * for (int i = 0; i < lines.length; i++) {
+						 * if (lines[i].length() > 15) {
+						 * if (i < lines.length - 1 && lines[i + 1].isEmpty()) {
+						 * lines[i + 1] = lines[i].substring(15);
+						 * }
+						 * lines[i] = lines[i].substring(0, 15);
+						 * }
+						 * }
+						 */
 
 						// prepare new outgoing packet:
 						PacketUpdateSignWrapper outgoing = new PacketUpdateSignWrapper(signUpdatePacket.shallowClone());

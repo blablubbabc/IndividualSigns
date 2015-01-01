@@ -72,13 +72,11 @@ public class SignSendEvent extends Event implements Cancellable {
 
 	/**
 	 * Sets the line of text at the specified index.
-	 * Lines longer than the allowed 15 characters will be either cut
-	 * or continued in the next lines (if those are empty) AFTER the event is over.
 	 * 
 	 * @param index
 	 *            Line number to set the text at, starting from 0.
 	 * @param line
-	 *            New text to set at the specified index.
+	 *            New text to set at the specified line index.
 	 * @throws IndexOutOfBoundsException
 	 *             Thrown when you try to access a line which does not exist.
 	 */
