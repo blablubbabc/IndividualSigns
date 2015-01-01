@@ -45,7 +45,6 @@ public class SimpleChanger implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onSignCreate(SignChangeEvent event) {
-		System.out.println("Handling change send event for key: " + key);
 		Player player = event.getPlayer();
 		String[] lines = event.getLines();
 		for (String line : lines) {
