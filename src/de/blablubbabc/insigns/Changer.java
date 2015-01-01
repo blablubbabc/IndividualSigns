@@ -22,9 +22,12 @@ public abstract class Changer {
 	 */
 	@Deprecated
 	public Changer(String key, String permission) {
-		if (key == null || permission == null)
+		if (key == null || permission == null) {
 			throw new IllegalArgumentException("The key and the permissions node inside the Changer constructor must not be null!");
-		if (key.length() > 15) throw new IllegalArgumentException("The key inside the Changer constructor must not be longer then 15!");
+		}
+		if (key.length() > 15) {
+			throw new IllegalArgumentException("The key inside the Changer constructor must not be longer then 15!");
+		}
 		this.key = key;
 		this.perm = permission;
 	}
@@ -32,7 +35,7 @@ public abstract class Changer {
 	/**
 	 * Get the key which will later be replaced on signs.
 	 * 
-	 * @return the text which will get replaced
+	 * @return The text which will get replaced.
 	 */
 	public String getKey() {
 		return key;
@@ -42,7 +45,7 @@ public abstract class Changer {
 	 * Returns the permission node which is need to create a sign with the key of this Changer on
 	 * it.
 	 * 
-	 * @return the needed permissions node
+	 * @return The needed permissions node.
 	 */
 	public String getPerm() {
 		return perm;
@@ -52,8 +55,8 @@ public abstract class Changer {
 	 * Get the value which replaces the key.
 	 * 
 	 * @param player
-	 *            the player looking at the sign
-	 * @return the text which replaces the text on the sign
+	 *            The player looking at the sign.
+	 * @return The text which replaces the text on the sign.
 	 */
 	public abstract String getValue(final Player player, final Location location);
 

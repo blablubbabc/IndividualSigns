@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -30,14 +31,14 @@ import com.comphenix.protocol.events.PacketEvent;
 public class InSigns extends JavaPlugin implements Listener {
 
 	@Deprecated
-	private Map<Changer, SimpleChanger> changers = new HashMap<Changer, SimpleChanger>();
-	private static ProtocolManager protocolManager;
+	private final Map<Changer, SimpleChanger> changers = new HashMap<Changer, SimpleChanger>();
+	private ProtocolManager protocolManager;
 
 	@Override
 	public void onEnable() {
 		protocolManager = ProtocolLibrary.getProtocolManager();
 
-		this.getServer().getPluginManager().registerEvents(this, this);
+		Bukkit.getPluginManager().registerEvents(this, this);
 
 		// default replacements:
 		// [PLAYER] -> playerName
@@ -50,7 +51,7 @@ public class InSigns extends JavaPlugin implements Listener {
 			}
 		};
 
-		// PACKETLISTENER
+		// register listener for outgoing sign packets:
 		protocolManager.addPacketListener(new PacketAdapter(this, ListenerPriority.NORMAL, PacketType.Play.Server.UPDATE_SIGN) {
 			@Override
 			public void onPacketSending(PacketEvent event) {
@@ -59,17 +60,17 @@ public class InSigns extends JavaPlugin implements Listener {
 				Player player = event.getPlayer();
 				Location location = new Location(player.getWorld(), incoming.getX(), incoming.getY(), incoming.getZ());
 
-				// call the event:
+				// call the SignSendEvent:
 				SignSendEvent signEvent = new SignSendEvent(player, location, incoming.getLines());
-				InSigns.this.getServer().getPluginManager().callEvent(signEvent);
+				Bukkit.getPluginManager().callEvent(signEvent);
 
 				if (signEvent.isCancelled()) {
 					event.setCancelled(true);
 				} else {
-					// only replace the outgoing packet, if it is needed
+					// only replace the outgoing packet if it is needed:
 					if (signEvent.isModified()) {
 						String[] lines = signEvent.getLines();
-						// checking line lengths and moving text into the next lines if appropriate
+						// checking line lengths and moving text into the next lines if appropriate:
 						for (int i = 0; i < lines.length; i++) {
 							if (lines[i].length() > 15) {
 								if (i < lines.length - 1 && lines[i + 1].isEmpty()) {
@@ -91,10 +92,10 @@ public class InSigns extends JavaPlugin implements Listener {
 
 		if (getConfig().getBoolean("metrics-stats", true)) {
 			try {
-			    MetricsLite metrics = new MetricsLite(this);
-			    metrics.start();
+				MetricsLite metrics = new MetricsLite(this);
+				metrics.start();
 			} catch (IOException e) {
-			    // Failed to submit the stats :-(
+				// Failed to submit the stats :-(
 			}
 		}
 
@@ -108,7 +109,7 @@ public class InSigns extends JavaPlugin implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onInteract(PlayerInteractEvent event) {
+	void onInteract(PlayerInteractEvent event) {
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null) {
 			Block block = event.getClickedBlock();
 			Material blockType = block.getType();
@@ -120,10 +121,11 @@ public class InSigns extends JavaPlugin implements Listener {
 	}
 
 	// API
+
 	/**
 	 * Gets the list of all registered Changers.
 	 * 
-	 * @return a list of all Changers
+	 * @return A list of all active Changers.
 	 */
 	@Deprecated
 	public synchronized List<Changer> getChangerList() {
@@ -131,36 +133,38 @@ public class InSigns extends JavaPlugin implements Listener {
 	}
 
 	/**
-	 * Sends a UpdateSign-Packet to the specified player. This is used to update a sign for the
+	 * Sends an UpdateSign-Packet to the specified player. This is used to update a sign for the
 	 * specified user only.
 	 * 
 	 * @param player
-	 *            the player receiving the sign update
+	 *            The player receiving the sign update.
 	 * @param sign
-	 *            the sign to send
+	 *            The sign to send.
 	 */
 	public static void sendSignChange(Player player, Sign sign) {
 		if (player == null || !player.isOnline()) return;
 		if (sign == null) return;
 		player.sendSignChange(sign.getLocation(), sign.getLines());
-		/*String[] lines = sign.getLines();
-		PacketContainer result = protocolManager.createPacket(PacketType.Play.Server.UPDATE_SIGN);
-		try {
-			result.getSpecificModifier(int.class).write(0, sign.getX());
-			result.getSpecificModifier(int.class).write(1, sign.getY());
-			result.getSpecificModifier(int.class).write(2, sign.getZ());
-			result.getStringArrays().write(0, lines);
-			protocolManager.sendServerPacket(player, result);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}*/
+		/*
+		 * String[] lines = sign.getLines();
+		 * PacketContainer result = protocolManager.createPacket(PacketType.Play.Server.UPDATE_SIGN);
+		 * try {
+		 * result.getSpecificModifier(int.class).write(0, sign.getX());
+		 * result.getSpecificModifier(int.class).write(1, sign.getY());
+		 * result.getSpecificModifier(int.class).write(2, sign.getZ());
+		 * result.getStringArrays().write(0, lines);
+		 * protocolManager.sendServerPacket(player, result);
+		 * } catch (Exception e) {
+		 * e.printStackTrace();
+		 * }
+		 */
 	}
 
 	/**
 	 * Removes a Changer for the list of active Changers.
 	 * 
 	 * @param changer
-	 *            the changer that shall be removed
+	 *            The changer that shall be removed.
 	 */
 	@Deprecated
 	public synchronized void removeChanger(Changer changer) {
@@ -169,13 +173,12 @@ public class InSigns extends JavaPlugin implements Listener {
 	}
 
 	/**
-	 * Registers a Changer. By adding a Changer, text on signs that matches the key of this Changer
-	 * will get replaced with the individual value specified by the Changers getValue() method. This
-	 * will remove all active Changers with an equal key.
+	 * Registers a Changer. By adding a Changer text on signs that matches the key of this Changer
+	 * will get replaced with the individual value specified by the Changers getValue() method.
+	 * This will replace the active Changer with an equal key if there is such.
 	 * 
 	 * @param changer
-	 *            this Changer is used to specify which text should be replaced with what other text
-	 *            on signs
+	 *            The Changer handling the replacement of sign text.
 	 */
 	@Deprecated
 	public synchronized void addChanger(final Changer changer) {

@@ -27,13 +27,14 @@ public abstract class SimpleChanger implements Listener {
 		}
 		this.key = key;
 		this.permissionsNode = permissionsNode;
+
 		Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
 	public abstract String getValue(Player player, Location location, String originalLine);
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-	public void onSignSend(SignSendEvent event) {
+	void onSignSend(SignSendEvent event) {
 		for (int i = 0; i < 4; i++) {
 			String line = event.getLine(i);
 			if (line.contains(key)) {
@@ -43,15 +44,14 @@ public abstract class SimpleChanger implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onSignCreate(SignChangeEvent event) {
+	void onSignCreate(SignChangeEvent event) {
 		Player player = event.getPlayer();
 		String[] lines = event.getLines();
 		for (String line : lines) {
-			if (line.contains(this.key)) {
-				if (!player.hasPermission(this.permissionsNode)) {
+			if (line.contains(key)) {
+				if (!player.hasPermission(permissionsNode)) {
 					event.setCancelled(true);
-					player.sendMessage(ChatColor.RED + "No permission to use '" + this.key + "' on your sign.");
-					player.sendMessage(ChatColor.RED + "Missing Permission: '" + this.permissionsNode + "'");
+					player.sendMessage(ChatColor.RED + "Missing permission '" + permissionsNode + "' to use '" + key + "' on your sign.");
 					return;
 				}
 			}

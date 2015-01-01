@@ -3,6 +3,7 @@ package de.blablubbabc.insigns;
 import com.comphenix.protocol.events.PacketContainer;
 
 public class PacketUpdateSignWrapper {
+
 	private final PacketContainer updateSignPacket;
 
 	public PacketUpdateSignWrapper(PacketContainer updateSignPacket) {
