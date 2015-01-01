@@ -71,9 +71,9 @@ public class SignSendEvent extends Event implements Cancellable {
 	}
 
 	/**
-	 * Sets the line of text at the specified index. Lines longer than the allowed 15 characters
-	 * will be either cut or continued in the next lines (if those are empty) AFTER the event is
-	 * over.
+	 * Sets the line of text at the specified index.
+	 * Lines longer than the allowed 15 characters will be either cut
+	 * or continued in the next lines (if those are empty) AFTER the event is over.
 	 * 
 	 * @param index
 	 *            Line number to set the text at, starting from 0.
@@ -84,7 +84,7 @@ public class SignSendEvent extends Event implements Cancellable {
 	 */
 	public void setLine(int index, String line) throws IndexOutOfBoundsException {
 		if (line == null) line = "";
-		// ignore, if the line wasn't actually changed:
+		// ignore if the line wasn't actually changed:
 		if (line.equals(lines[index])) return;
 		// only copy the string array if really needed:
 		if (!modified) {

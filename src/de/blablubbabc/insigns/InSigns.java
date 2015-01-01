@@ -41,6 +41,7 @@ public class InSigns extends JavaPlugin implements Listener {
 		Bukkit.getPluginManager().registerEvents(this, this);
 
 		// default replacements:
+
 		// [PLAYER] -> playerName
 		// permission: insigns.create.player
 		new SimpleChanger(this, "[PLAYER]", "insigns.create.player") {
@@ -90,7 +91,7 @@ public class InSigns extends JavaPlugin implements Listener {
 			}
 		});
 
-		if (getConfig().getBoolean("metrics-stats", true)) {
+		if (this.getConfig().getBoolean("metrics-stats", true)) {
 			try {
 				MetricsLite metrics = new MetricsLite(this);
 				metrics.start();
@@ -144,20 +145,8 @@ public class InSigns extends JavaPlugin implements Listener {
 	public static void sendSignChange(Player player, Sign sign) {
 		if (player == null || !player.isOnline()) return;
 		if (sign == null) return;
+
 		player.sendSignChange(sign.getLocation(), sign.getLines());
-		/*
-		 * String[] lines = sign.getLines();
-		 * PacketContainer result = protocolManager.createPacket(PacketType.Play.Server.UPDATE_SIGN);
-		 * try {
-		 * result.getSpecificModifier(int.class).write(0, sign.getX());
-		 * result.getSpecificModifier(int.class).write(1, sign.getY());
-		 * result.getSpecificModifier(int.class).write(2, sign.getZ());
-		 * result.getStringArrays().write(0, lines);
-		 * protocolManager.sendServerPacket(player, result);
-		 * } catch (Exception e) {
-		 * e.printStackTrace();
-		 * }
-		 */
 	}
 
 	/**

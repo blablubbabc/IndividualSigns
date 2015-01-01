@@ -19,12 +19,10 @@ public abstract class SimpleChanger implements Listener {
 		if (plugin == null || !plugin.isEnabled()) {
 			throw new IllegalArgumentException("The plugin must not be null and has to be enabled!");
 		}
-		if ((key == null) || (permissionsNode == null)) {
+		if (key == null || permissionsNode == null) {
 			throw new IllegalArgumentException("The key and the permissions node must not be null!");
 		}
-		if (key.length() > 15) {
-			throw new IllegalArgumentException("The key must not be longer then 15!");
-		}
+
 		this.key = key;
 		this.permissionsNode = permissionsNode;
 
