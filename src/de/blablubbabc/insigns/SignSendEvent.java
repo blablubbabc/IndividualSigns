@@ -54,9 +54,7 @@ public class SignSendEvent extends Event implements Cancellable {
 		return lines[index];
 	}
 
-	// non-api method: plugins shouldn't modify the string array directly, because it originally is
-	// shared among the sign update packets for multiple players and only gets copied when the first
-	// plugin modifies it via the setLine() method
+	// non-api method: plugins shouldn't modify the string array directly because we want to keep track if the lines were modified
 	String[] getLines() {
 		return lines;
 	}
@@ -84,11 +82,8 @@ public class SignSendEvent extends Event implements Cancellable {
 		if (line == null) line = "";
 		// ignore if the line wasn't actually changed:
 		if (line.equals(lines[index])) return;
-		// only copy the string array if really needed:
-		if (!modified) {
-			modified = true;
-			lines = new String[] { lines[0], lines[1], lines[2], lines[3] };
-		}
+
+		modified = true;
 		lines[index] = line;
 	}
 

@@ -10,7 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.plugin.Plugin;
 
-public abstract class SimpleChanger implements Listener {
+public class SimpleChanger implements Listener {
 
 	private final String key;
 	private final String permissionsNode;
@@ -26,13 +26,15 @@ public abstract class SimpleChanger implements Listener {
 		this.key = key;
 		this.permissionsNode = permissionsNode;
 
-		Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
+		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 
-	public abstract String getValue(Player player, Location location, String originalLine);
+	public String getValue(Player player, Location location, String originalLine) {
+		return key;
+	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-	void onSignSend(SignSendEvent event) {
+	public void onSignSend(SignSendEvent event) {
 		for (int i = 0; i < 4; i++) {
 			String line = event.getLine(i);
 			if (line.contains(key)) {
@@ -43,6 +45,7 @@ public abstract class SimpleChanger implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	void onSignCreate(SignChangeEvent event) {
+		System.out.println("Handling change send event for key: " + key);
 		Player player = event.getPlayer();
 		String[] lines = event.getLines();
 		for (String line : lines) {

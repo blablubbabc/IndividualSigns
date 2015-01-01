@@ -27,6 +27,7 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.wrappers.BlockPosition;
 
 public class InSigns extends JavaPlugin implements Listener {
 
@@ -67,37 +68,27 @@ public class InSigns extends JavaPlugin implements Listener {
 			@Override
 			public void onPacketSending(PacketEvent event) {
 				PacketContainer signUpdatePacket = event.getPacket();
-				PacketUpdateSignWrapper incoming = new PacketUpdateSignWrapper(signUpdatePacket);
 				Player player = event.getPlayer();
-				Location location = new Location(player.getWorld(), incoming.getX(), incoming.getY(), incoming.getZ());
+				BlockPosition blockPosition = UpdateSignPacketUtility.getLocation(signUpdatePacket);
+				Location location = new Location(player.getWorld(), blockPosition.getX(), blockPosition.getY(), blockPosition.getZ());
 
 				// call the SignSendEvent:
-				SignSendEvent signEvent = new SignSendEvent(player, location, incoming.getLines());
-				Bukkit.getPluginManager().callEvent(signEvent);
+				SignSendEvent signSendEvent = new SignSendEvent(player, location, UpdateSignPacketUtility.getLinesAsStrings(signUpdatePacket));
+				Bukkit.getPluginManager().callEvent(signSendEvent);
 
-				if (signEvent.isCancelled()) {
+				if (signSendEvent.isCancelled()) {
 					event.setCancelled(true);
 				} else {
 					// only replace the outgoing packet if it is needed:
-					if (signEvent.isModified()) {
-						String[] lines = signEvent.getLines();
-						// checking line lengths and moving text into the next lines if appropriate:
-						/*
-						 * for (int i = 0; i < lines.length; i++) {
-						 * if (lines[i].length() > 15) {
-						 * if (i < lines.length - 1 && lines[i + 1].isEmpty()) {
-						 * lines[i + 1] = lines[i].substring(15);
-						 * }
-						 * lines[i] = lines[i].substring(0, 15);
-						 * }
-						 * }
-						 */
+					if (signSendEvent.isModified()) {
+						String[] lines = signSendEvent.getLines();
+						player.sendMessage(lines);
 
 						// prepare new outgoing packet:
-						PacketUpdateSignWrapper outgoing = new PacketUpdateSignWrapper(signUpdatePacket.shallowClone());
-						outgoing.setLines(lines);
+						PacketContainer outgoingPacket = signUpdatePacket.shallowClone();
+						UpdateSignPacketUtility.setLinesFromStrings(outgoingPacket, lines);
 
-						event.setPacket(outgoing.getPacket());
+						event.setPacket(outgoingPacket);
 					}
 				}
 			}
@@ -111,14 +102,11 @@ public class InSigns extends JavaPlugin implements Listener {
 				// Failed to submit the stats :-(
 			}
 		}
-
-		this.getLogger().info(this.getDescription().getVersion() + " enabled.");
 	}
 
 	@Override
 	public void onDisable() {
 		protocolManager = null;
-		this.getLogger().info(this.getDescription().getVersion() + " disabled.");
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
