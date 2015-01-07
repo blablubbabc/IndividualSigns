@@ -1,5 +1,6 @@
 package de.blablubbabc.insigns;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -18,6 +19,7 @@ public class SignSendEvent extends Event implements Cancellable {
 	private boolean cancelled = false;
 
 	SignSendEvent(Player player, Location location, String[] lines) {
+		super(!Bukkit.isPrimaryThread());
 		this.player = player;
 		this.location = location;
 		this.lines = lines;
