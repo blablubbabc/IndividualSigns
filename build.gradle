@@ -15,7 +15,7 @@ apply plugin: 'maven'
 apply plugin: 'eclipse'
 
 // default tasks
-defaultTasks 'licenseFormat', 'check', 'build'
+defaultTasks 'check', 'build'
 
 sourceCompatibility = '1.7'
 targetCompatibility = '1.7'
@@ -41,11 +41,10 @@ repositories {
     maven {
         url "http://ci.shadowvolt.com/plugin/repository/everything/"
     }
+    maven {
+        url "http://repo.comphenix.net/content/groups/public/"
+    }
     mavenLocal()
-}
-
-configurations.all {
-    transitive = false
 }
 
 dependencies {
