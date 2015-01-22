@@ -1,0 +1,103 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
+    }
+}
+
+import org.apache.tools.ant.filters.*
+
+apply plugin: 'java'
+// apply plugin: 'license'
+apply plugin: 'maven'
+apply plugin: 'eclipse'
+
+// default tasks
+defaultTasks 'licenseFormat', 'check', 'build'
+
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
+
+group = 'de.blablubbabc'
+version = '2.1'
+
+ext.projectName = projectName
+ext.inceptionYear = inceptionYear
+ext.packaging = packaging
+ext.url = url
+ext.description = description
+ext.author = author
+
+repositories {
+    mavenCentral()
+    maven {
+        url "http://repo.bukkit.org/content/groups/public"
+    }
+    maven {
+        url "https://hub.spigotmc.org/nexus/content/groups/public/"
+    }
+    maven {
+        url "http://ci.shadowvolt.com/plugin/repository/everything/"
+    }
+    mavenLocal()
+}
+
+configurations.all {
+    transitive = false
+}
+
+dependencies {
+    compile 'org.bukkit:bukkit:1.8-R0.1-SNAPSHOT'
+    compile 'com.comphenix.protocol:ProtocolLib:3.6.3+'
+}
+
+// include and filter resources
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        filter {
+            line ->
+            line
+            .replace('${name}', project.name)
+            .replace('${version}', project.version)
+            .replace('${author}', project.author)
+            .replace('${authorAlias}', project.authorAlias)
+            .replace('${url}', project.url)
+            .replace('${year}', project.inceptionYear)
+        }
+    } 
+}
+
+// license header
+/*license {
+    ext.name = project.name
+    ext.author = project.author
+    ext.url = project.url
+    ext.year = project.inceptionYear*/
+//    exclude "**/*.info"
+//    exclude "assets/**"
+/*    header file('HEADER.txt')
+    sourceSets = project.sourceSets
+    ignoreFailures true
+    strictCheck true
+}*/
+
+// source compiler configuration
+configure([compileJava, compileTestJava]) {
+    //options.compilerArgs += [ '-Xlint:all', '-Xlint:-path' ]
+    options.deprecation = false
+    options.encoding = 'utf8'
+}
+
+artifacts {
+    archives jar
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            mavenLocal()
+        }
+    }
+}

@@ -1,7 +1,7 @@
 name: InSigns
 main: de.blablubbabc.insigns.InSigns
-version: 2.1
-author: blablubbabc
+version: '${version}'
+author: ${authorAlias}
 description: Displays the text on signs for each player individual differently.
 depend: [ProtocolLib]
 permissions:
