@@ -82,7 +82,6 @@ public class InSigns extends JavaPlugin implements Listener {
 					// only replace the outgoing packet if it is needed:
 					if (signSendEvent.isModified()) {
 						String[] lines = signSendEvent.getLines();
-						player.sendMessage(lines);
 
 						// prepare new outgoing packet:
 						PacketContainer outgoingPacket = signUpdatePacket.shallowClone();
