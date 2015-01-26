@@ -32,7 +32,7 @@ public class UpdateSignPacketUtility {
 		String[] lines = new String[4];
 		WrappedChatComponent[] rawLines = getLines(updateSignPacket);
 		for (int i = 0; i < 4; i++) {
-			lines[i] = rawLines[i].getJson();
+			lines[i] = rawLines[i] == null ? "" : rawLines[i].getJson();
 		}
 		return lines;
 	}
@@ -43,7 +43,7 @@ public class UpdateSignPacketUtility {
 
 		WrappedChatComponent[] rawLines = new WrappedChatComponent[4];
 		for (int i = 0; i < 4; i++) {
-			rawLines[i] = WrappedChatComponent.fromJson(lines[i]);
+			rawLines[i] = lines[i].isEmpty() ? null : WrappedChatComponent.fromJson(lines[i]);
 		}
 
 		setLines(updateSignPacket, rawLines);
