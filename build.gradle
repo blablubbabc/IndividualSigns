@@ -62,7 +62,6 @@ processResources {
 			.replace('${version}', project.version)
 			.replace('${author}', project.author)
 			.replace('${authorAlias}', project.authorAlias)
-			.replace('${authors}', project.authors)
 			.replace('${url}', project.url)
 			.replace('${year}', project.inceptionYear)
 	}
