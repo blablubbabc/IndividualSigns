@@ -54,7 +54,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.bukkit:bukkit:1.8-R0.1-SNAPSHOT'
+	compile 'org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT'
     compile 'com.comphenix.protocol:ProtocolLib:3.6.3+'
 }
 
