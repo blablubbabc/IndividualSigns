@@ -37,25 +37,25 @@ ext.description = description
 ext.author = author
 
 repositories {
-    mavenCentral()
-    maven {
-        url "http://repo.bukkit.org/content/groups/public"
-    }
-    maven {
-        url "https://hub.spigotmc.org/nexus/content/groups/public/"
-    }
-    maven {
-        url "http://ci.shadowvolt.com/plugin/repository/everything/"
-    }
-    maven {
-        url "http://repo.comphenix.net/content/groups/public/"
-    }
-    mavenLocal()
+	mavenCentral()
+	maven {
+		url "http://repo.bukkit.org/content/groups/public"
+	}
+	maven {
+		url "https://hub.spigotmc.org/nexus/content/groups/public/"
+	}
+	maven {
+		url "http://ci.shadowvolt.com/plugin/repository/everything/"
+	}
+	maven {
+		url "http://repo.comphenix.net/content/groups/public/"
+	}
+	mavenLocal()
 }
 
 dependencies {
 	compile 'org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT'
-    compile 'com.comphenix.protocol:ProtocolLib:3.6.3+'
+	compile 'com.comphenix.protocol:ProtocolLib:3.6.3+'
 }
 
 // include and filter resources
@@ -89,19 +89,19 @@ processResources {
 
 // source compiler configuration
 configure([compileJava, compileTestJava]) {
-    //options.compilerArgs += [ '-Xlint:all', '-Xlint:-path' ]
-    options.deprecation = false
-    options.encoding = 'utf8'
+	//options.compilerArgs += [ '-Xlint:all', '-Xlint:-path' ]
+	options.deprecation = false
+	options.encoding = 'utf8'
 }
 
 artifacts {
-    archives jar
+	archives jar
 }
 
 uploadArchives {
-    repositories {
-        mavenDeployer {
-            mavenLocal()
-        }
-    }
+	repositories {
+		mavenDeployer {
+			mavenLocal()
+		}
+	}
 }
