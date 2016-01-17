@@ -39,23 +39,26 @@ ext.author = author
 repositories {
 	mavenCentral()
 	maven {
-		url "http://repo.bukkit.org/content/groups/public"
+		url 'http://repo.bukkit.org/content/groups/public'
 	}
 	maven {
-		url "https://hub.spigotmc.org/nexus/content/groups/public/"
+		url 'https://hub.spigotmc.org/nexus/content/groups/public/'
 	}
 	maven {
-		url "http://ci.shadowvolt.com/plugin/repository/everything/"
+		url 'http://repo.dmulloy2.net/content/groups/public/'
 	}
 	maven {
-		url "http://repo.comphenix.net/content/groups/public/"
+		url 'http://repo.comphenix.net/content/groups/public/'
+	}
+	maven {
+		url 'http://ci.shadowvolt.com/plugin/repository/everything/'
 	}
 	mavenLocal()
 }
 
 dependencies {
 	compile 'org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT'
-	compile 'com.comphenix.protocol:ProtocolLib:3.6.3+'
+	compile 'com.comphenix.protocol:ProtocolLib:3.6.4'
 }
 
 // include and filter resources
