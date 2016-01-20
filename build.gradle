@@ -27,14 +27,13 @@ sourceCompatibility = '1.7'
 targetCompatibility = '1.7'
 
 group = 'de.blablubbabc'
-version = '2.3'
+version = projectVersion
 
 ext.projectName = projectName
-ext.inceptionYear = inceptionYear
-ext.packaging = packaging
 ext.url = url
 ext.description = description
 ext.author = author
+ext.authors = authors
 
 repositories {
 	mavenCentral()
@@ -70,9 +69,8 @@ processResources {
 			.replace('${name}', project.name)
 			.replace('${version}', project.version)
 			.replace('${author}', project.author)
-			.replace('${authorAlias}', project.authorAlias)
 			.replace('${url}', project.url)
-			.replace('${year}', project.inceptionYear)
+			.replace('${description}', project.description)
 	}
 }
 
@@ -81,7 +79,6 @@ processResources {
 	ext.name = project.name
 	ext.author = project.author
 	ext.url = project.url
-	ext.year = project.inceptionYear
 */
 	// header file('HEADER.txt')
 	// include '**/*.java'
