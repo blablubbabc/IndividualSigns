@@ -1,8 +1,9 @@
 name: InSigns
 main: de.blablubbabc.insigns.InSigns
 version: '${version}'
-author: ${authorAlias}
-description: Displays the text on signs for each player individual differently.
+author: ${author}
+website: '${url}'
+description: '${description}'
 depend: [ProtocolLib]
 permissions:
   insigns.create.player:
