@@ -1,0 +1,107 @@
+/*buildscript {
+	repositories {
+		jcenter()
+		mavenCentral()
+		maven {
+			url 'https://plugins.gradle.org/m2/'
+		}
+	}
+
+	dependencies {
+		classpath 'gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:0.12.1'
+	}
+}*/
+
+import org.apache.tools.ant.filters.*
+
+// apply plugin: 'com.github.hierynomus.license'
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'eclipse'
+
+// default tasks
+defaultTasks 'check', 'build'
+
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
+
+group = 'de.blablubbabc'
+version = projectVersion
+
+ext.projectName = projectName
+ext.url = url
+ext.description = description
+ext.author = author
+ext.authors = authors
+
+repositories {
+	mavenCentral()
+	maven {
+		url 'http://repo.bukkit.org/content/groups/public'
+	}
+	maven {
+		url 'https://hub.spigotmc.org/nexus/content/groups/public/'
+	}
+	maven {
+		url 'http://repo.dmulloy2.net/content/groups/public/'
+	}
+	maven {
+		url 'http://repo.comphenix.net/content/groups/public/'
+	}
+	maven {
+		url 'http://ci.shadowvolt.com/plugin/repository/everything/'
+	}
+	mavenLocal()
+}
+
+dependencies {
+	compile 'org.bukkit:bukkit:1.5.2-R1.0'
+	compile 'com.comphenix.protocol:ProtocolLib:3.1.0'
+}
+
+// include and filter resources
+processResources {
+	from(sourceSets.main.resources.srcDirs)
+	filter {
+			line ->
+			line
+			.replace('${name}', project.name)
+			.replace('${version}', project.version)
+			.replace('${author}', project.author)
+			.replace('${url}', project.url)
+			.replace('${description}', project.description)
+	}
+}
+
+// license header
+/*license {
+	ext.name = project.name
+	ext.author = project.author
+	ext.url = project.url
+*/
+	// header file('HEADER.txt')
+	// include '**/*.java'
+/*
+	ignoreFailures true
+	strictCheck true
+}*/
+
+// source compiler configuration
+configure([compileJava, compileTestJava]) {
+	//options.compilerArgs += [ '-Xlint:all', '-Xlint:-path' ]
+	options.deprecation = false
+	options.encoding = 'utf8'
+}
+
+artifacts {
+	archives jar
+}
+
+uploadArchives {
+	repositories {
+		mavenDeployer {
+			mavenLocal()
+		}
+	}
+}
