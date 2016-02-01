@@ -25,6 +25,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 
 public class InSigns extends JavaPlugin implements Listener {
@@ -141,7 +142,18 @@ public class InSigns extends JavaPlugin implements Listener {
 		if (player == null || !player.isOnline()) return;
 		if (sign == null) return;
 
-		player.sendSignChange(sign.getLocation(), sign.getLines());
+		String[] lin = sign.getLines();
+		PacketContainer result = protocolManager.createPacket(0x82);
+		try {
+			result.getSpecificModifier(int.class).write(0, sign.getX());
+			result.getSpecificModifier(int.class).write(1, sign.getY());
+			result.getSpecificModifier(int.class).write(2, sign.getZ());
+			result.getStringArrays().write(0, lin);
+			protocolManager.sendServerPacket(player, result);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
 	}
 
 	/**
