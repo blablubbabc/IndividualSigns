@@ -1,0 +1,14 @@
+name: InSigns
+main: de.blablubbabc.insigns.InSigns
+version: '${version}'
+author: ${author}
+website: '${url}'
+description: '${description}'
+depend: [ProtocolLib]
+permissions:
+  insigns.create.player:
+    description: Ability to create signs displaying individual player names.
+    default: true
+  insigns.create.display:
+    description: Ability to create signs displaying individual player display/nick names.
+    default: true
