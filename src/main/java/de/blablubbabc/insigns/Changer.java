@@ -3,6 +3,7 @@ package de.blablubbabc.insigns;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+@Deprecated
 public abstract class Changer {
 
 	private final String key;
