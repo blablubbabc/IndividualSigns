@@ -18,6 +18,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.comphenix.protocol.PacketType;
@@ -110,6 +111,9 @@ public class InSigns extends JavaPlugin implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	void onInteract(PlayerInteractEvent event) {
+		// ignore off-hand interactions:
+		if (event.getHand() != EquipmentSlot.HAND) return;
+
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null) {
 			Block block = event.getClickedBlock();
 			Material blockType = block.getType();
