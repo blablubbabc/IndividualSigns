@@ -32,8 +32,8 @@ version = projectVersion
 ext.projectName = projectName
 ext.url = url
 ext.description = description
-ext.author = author
 ext.authors = authors
+ext.author = authors.split(',')[0]
 
 repositories {
 	mavenCentral()
@@ -78,6 +78,7 @@ processResources {
 /*license {
 	ext.name = project.name
 	ext.author = project.author
+	ext.authors = project.authors
 	ext.url = project.url
 */
 	// header file('HEADER.txt')
