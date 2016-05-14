@@ -56,12 +56,13 @@ repositories {
 }
 
 dependencies {
-	compile 'org.bukkit:bukkit:1.9-R0.1-SNAPSHOT'
-	compile 'com.comphenix.protocol:ProtocolLib:3.6.4'
+	compile 'org.bukkit:bukkit:1.9.4-R0.1-SNAPSHOT'
+	compile 'com.comphenix.protocol:ProtocolLib:4.0.0-SNAPSHOT'
 }
 
 // include and filter resources
 processResources {
+	from ('LICENSE.txt')
 	from(sourceSets.main.resources.srcDirs)
 	filter {
 			line ->
@@ -69,6 +70,7 @@ processResources {
 			.replace('${name}', project.name)
 			.replace('${version}', project.version)
 			.replace('${author}', project.author)
+			.replace('${authors}', project.authors)
 			.replace('${url}', project.url)
 			.replace('${description}', project.description)
 	}
