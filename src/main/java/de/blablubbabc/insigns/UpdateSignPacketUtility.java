@@ -28,6 +28,10 @@ public class UpdateSignPacketUtility {
 		return (NbtCompound) tileEntityDataPacket.getNbtModifier().read(0);
 	}
 
+	public static void setTileEntityData(PacketContainer tileEntityDataPacket, NbtCompound data) {
+		tileEntityDataPacket.getNbtModifier().write(0, data);
+	}
+
 	public static String[] getRawLines(PacketContainer updateSignPacket) {
 		NbtCompound data = getTileEntityData(updateSignPacket);
 		String[] rawLines = new String[4];
@@ -46,5 +50,6 @@ public class UpdateSignPacketUtility {
 		for (int i = 0; i < 4; i++) {
 			data.put("Text" + (i + 1), lines[i]);
 		}
+		setTileEntityData(updateSignPacket, data);
 	}
 }
