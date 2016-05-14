@@ -65,16 +65,20 @@ public class InSigns extends JavaPlugin implements Listener {
 		};
 
 		// register listener for outgoing sign packets:
-		protocolManager.addPacketListener(new PacketAdapter(this, ListenerPriority.NORMAL, PacketType.Play.Server.UPDATE_SIGN) {
+		protocolManager.addPacketListener(new PacketAdapter(this, ListenerPriority.NORMAL, PacketType.Play.Server.TILE_ENTITY_DATA) {
 			@Override
 			public void onPacketSending(PacketEvent event) {
-				PacketContainer signUpdatePacket = event.getPacket();
+				PacketContainer tileEntityDataPacket = event.getPacket();
+				if (!UpdateSignPacketUtility.isUpdateSignPacket(tileEntityDataPacket)) {
+					return; // ignore
+				}
+
 				Player player = event.getPlayer();
-				BlockPosition blockPosition = UpdateSignPacketUtility.getLocation(signUpdatePacket);
+				BlockPosition blockPosition = UpdateSignPacketUtility.getLocation(tileEntityDataPacket);
 				Location location = new Location(player.getWorld(), blockPosition.getX(), blockPosition.getY(), blockPosition.getZ());
 
 				// call the SignSendEvent:
-				SignSendEvent signSendEvent = new SignSendEvent(player, location, UpdateSignPacketUtility.getLinesAsStrings(signUpdatePacket));
+				SignSendEvent signSendEvent = new SignSendEvent(player, location, UpdateSignPacketUtility.getRawLines(tileEntityDataPacket));
 				Bukkit.getPluginManager().callEvent(signSendEvent);
 
 				if (signSendEvent.isCancelled()) {
@@ -85,8 +89,8 @@ public class InSigns extends JavaPlugin implements Listener {
 						String[] lines = signSendEvent.getLines();
 
 						// prepare new outgoing packet:
-						PacketContainer outgoingPacket = signUpdatePacket.shallowClone();
-						UpdateSignPacketUtility.setLinesFromStrings(outgoingPacket, lines);
+						PacketContainer outgoingPacket = tileEntityDataPacket.shallowClone();
+						UpdateSignPacketUtility.setRawLines(outgoingPacket, lines);
 
 						event.setPacket(outgoingPacket);
 					}
