@@ -1,4 +1,4 @@
-/*buildscript {
+buildscript {
 	repositories {
 		jcenter()
 		mavenCentral()
@@ -10,11 +10,11 @@
 	dependencies {
 		classpath 'gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:0.12.1'
 	}
-}*/
+}
 
 import org.apache.tools.ant.filters.*
 
-// apply plugin: 'com.github.hierynomus.license'
+apply plugin: 'com.github.hierynomus.license'
 
 apply plugin: 'java'
 apply plugin: 'maven'
@@ -77,18 +77,19 @@ processResources {
 }
 
 // license header
-/*license {
+license {
 	ext.name = project.name
 	ext.author = project.author
 	ext.authors = project.authors
 	ext.url = project.url
-*/
-	// header file('HEADER.txt')
-	// include '**/*.java'
-/*
+
+	header file('HEADER.txt')
+	include '**/*.java'
+	exclude '**/thirdparty/**'
+
 	ignoreFailures true
 	strictCheck true
-}*/
+}
 
 // source compiler configuration
 configure([compileJava, compileTestJava]) {

@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) blablubbabc <http://www.blablubbabc.de>
+ * All rights reserved.
+ */
 package de.blablubbabc.insigns;
 
 import org.bukkit.Bukkit;

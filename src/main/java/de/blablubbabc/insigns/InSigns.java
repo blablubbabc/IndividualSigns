@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) blablubbabc <http://www.blablubbabc.de>
+ * All rights reserved.
+ */
 package de.blablubbabc.insigns;
 
 import java.io.IOException;
@@ -29,6 +33,8 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.BlockPosition;
+
+import de.blablubbabc.insigns.thirdparty.MetricsLite;
 
 public class InSigns extends JavaPlugin implements Listener {
 
