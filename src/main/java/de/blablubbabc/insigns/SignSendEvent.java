@@ -12,7 +12,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * This event is called whenever the server is about to send a player a sign update packet.
+ * This event is called whenever the server is about to update a sign's contents for a specific player.
  */
 public class SignSendEvent extends Event implements Cancellable {
 
@@ -30,45 +30,50 @@ public class SignSendEvent extends Event implements Cancellable {
 	}
 
 	/**
-	 * Gets the player which receives the sign packet.
+	 * Gets the player which receives the sign content update.
 	 * 
-	 * @return The receiving player.
+	 * @return the receiving player
 	 */
 	public Player getPlayer() {
 		return player;
 	}
 
 	/**
-	 * Gets the location of the sign data being sent.
+	 * Gets the location of the sign for which data is being sent.
 	 * 
-	 * @return The location of the sent sign data.
+	 * @return the location of the sign
 	 */
 	public Location getLocation() {
-		return location;
+		return location.clone();
 	}
 
 	/**
 	 * Gets the line of text at the specified index.
 	 * 
+	 * <p>
+	 * This will be the raw line content, as it is contained in the corresponding packet.
+	 * </p>
+	 * 
 	 * @param index
-	 *            Line number to get the text from starting at 0.
-	 * @return The sign text on the given line.
+	 *            the line number to get the text from, starting at 0
+	 * @return the sign text on the given line
 	 * @throws IndexOutOfBoundsException
-	 *             Thrown when you try to access a line which does not exist.
+	 *             when trying to access a line which does not exist
 	 */
 	public String getLine(int index) throws IndexOutOfBoundsException {
 		return lines[index];
 	}
 
-	// non-api method: plugins shouldn't modify the string array directly because we want to keep track if the lines were modified
+	// non-api method: plugins shouldn't modify the string array directly because we want to keep track if the lines
+	// were modified
 	String[] getLines() {
 		return lines;
 	}
 
 	/**
-	 * Whether or not this event was already modified.
+	 * Whether or not this event was modified.
 	 * 
-	 * @return True if this event was already modified.
+	 * @return <code>true</code> if this event was modified, <code>false</code> otherwise
 	 */
 	public boolean isModified() {
 		return modified;
@@ -77,12 +82,16 @@ public class SignSendEvent extends Event implements Cancellable {
 	/**
 	 * Sets the line of text at the specified index.
 	 * 
+	 * <p>
+	 * This expects the raw line content, as it is contained in the corresponding packet.
+	 * </p>
+	 * 
 	 * @param index
-	 *            Line number to set the text at, starting from 0.
+	 *            the line number to set the text at, starting at 0
 	 * @param line
-	 *            New text to set at the specified line index.
+	 *            the new text to set at the specified line index
 	 * @throws IndexOutOfBoundsException
-	 *             Thrown when you try to access a line which does not exist.
+	 *             when trying to access a line which does not exist
 	 */
 	public void setLine(int index, String line) throws IndexOutOfBoundsException {
 		if (line == null) line = "";
@@ -98,6 +107,9 @@ public class SignSendEvent extends Event implements Cancellable {
 		return cancelled;
 	}
 
+	/**
+	 * Canceling this event will prevent the sign content from updating for the affected player.
+	 */
 	@Override
 	public void setCancelled(boolean cancelled) {
 		this.cancelled = cancelled;
