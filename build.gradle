@@ -33,7 +33,7 @@ ext.projectName = projectName
 ext.url = url
 ext.description = description
 ext.authors = authors
-ext.author = authors.split(',')[0]
+ext.author = authors.split(',\\s*')[0]
 
 repositories {
 	mavenCentral()
