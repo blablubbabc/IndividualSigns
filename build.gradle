@@ -49,9 +49,6 @@ repositories {
 	maven {
 		url 'http://repo.comphenix.net/content/groups/public/'
 	}
-	maven {
-		url 'http://ci.shadowvolt.com/plugin/repository/everything/'
-	}
 	mavenLocal()
 }
 
