@@ -1,5 +1,3 @@
-package de.blablubbabc.insigns.thirdparty;
-
 /*
  * Copyright 2011-2013 Tyler Blair. All rights reserved.
  * 
@@ -27,13 +25,7 @@ package de.blablubbabc.insigns.thirdparty;
  * authors and contributors and should not be interpreted as representing official policies,
  * either expressed or implied, of anybody else.
  */
-
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.scheduler.BukkitTask;
+package de.blablubbabc.insigns.thirdparty;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -49,6 +41,13 @@ import java.net.URLEncoder;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
+
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.scheduler.BukkitTask;
 
 public class MetricsLite {
 
@@ -158,6 +157,7 @@ public class MetricsLite {
 
 				private boolean firstPost = true;
 
+				@Override
 				public void run() {
 					try {
 						// This has to be synchronized or it can collide with the disable method.

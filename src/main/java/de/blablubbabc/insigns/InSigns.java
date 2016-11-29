@@ -44,7 +44,7 @@ import de.blablubbabc.insigns.thirdparty.MetricsLite;
 public class InSigns extends JavaPlugin implements Listener {
 
 	@Deprecated
-	private final Map<Changer, SimpleChanger> changers = new HashMap<Changer, SimpleChanger>();
+	private final Map<Changer, SimpleChanger> changers = new HashMap<>();
 	private ProtocolManager protocolManager;
 
 	@Override
@@ -103,7 +103,7 @@ public class InSigns extends JavaPlugin implements Listener {
 					// prepare new outgoing packet:
 					PacketContainer outgoingPacket = packet.shallowClone();
 					// create new sign data compound:
-					NbtCompound outgoingSignData = (NbtCompound) NbtFactory.ofCompound(signData.getName());
+					NbtCompound outgoingSignData = NbtFactory.ofCompound(signData.getName());
 					// copy tile entity data (shallow copy):
 					for (String key : signData.getKeys()) {
 						outgoingSignData.put(key, signData.getValue(key));
@@ -154,7 +154,7 @@ public class InSigns extends JavaPlugin implements Listener {
 						if (outgoingPacket == null) {
 							outgoingPacket = packet.shallowClone();
 							// copy tile entities data list (shallow copy):
-							outgoingTileEntitiesData = new ArrayList<Object>(tileEntitiesData);
+							outgoingTileEntitiesData = new ArrayList<>(tileEntitiesData);
 							// use the new tile entities data list for the outgoing packet:
 							ProtocolUtils.Packet.MapChunk.setTileEntitiesData(outgoingPacket, outgoingTileEntitiesData);
 						}
@@ -171,13 +171,13 @@ public class InSigns extends JavaPlugin implements Listener {
 							if (outgoingPacket == null) {
 								outgoingPacket = packet.shallowClone();
 								// copy tile entities data list (shallow copy):
-								outgoingTileEntitiesData = new ArrayList<Object>(tileEntitiesData);
+								outgoingTileEntitiesData = new ArrayList<>(tileEntitiesData);
 								// use the new tile entities data list for the outgoing packet:
 								ProtocolUtils.Packet.MapChunk.setTileEntitiesData(outgoingPacket, outgoingTileEntitiesData);
 							}
 
 							// create new sign data compound:
-							NbtCompound outgoingSignData = (NbtCompound) NbtFactory.ofCompound(tileEntityData.getName());
+							NbtCompound outgoingSignData = NbtFactory.ofCompound(tileEntityData.getName());
 							// copy tile entity data:
 							for (String key : tileEntityData.getKeys()) {
 								outgoingSignData.put(key, tileEntityData.getValue(key));
@@ -253,7 +253,7 @@ public class InSigns extends JavaPlugin implements Listener {
 	 */
 	@Deprecated
 	public synchronized List<Changer> getChangerList() {
-		return new ArrayList<Changer>(changers.keySet());
+		return new ArrayList<>(changers.keySet());
 	}
 
 	/**
