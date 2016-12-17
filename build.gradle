@@ -36,10 +36,7 @@ ext.authors = authors
 ext.author = authors.split(',\\s*')[0]
 
 repositories {
-	mavenCentral()
-	maven {
-		url 'http://repo.bukkit.org/content/groups/public'
-	}
+	mavenLocal()
 	maven {
 		url 'https://hub.spigotmc.org/nexus/content/groups/public/'
 	}
@@ -49,7 +46,7 @@ repositories {
 	maven {
 		url 'http://repo.comphenix.net/content/groups/public/'
 	}
-	mavenLocal()
+	mavenCentral()
 }
 
 dependencies {
