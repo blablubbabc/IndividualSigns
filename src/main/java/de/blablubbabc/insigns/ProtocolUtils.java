@@ -111,7 +111,9 @@ public class ProtocolUtils {
 			}
 
 			public static boolean isTileEntitySignData(NbtCompound tileEntityData) {
-				return getId(tileEntityData).equals("Sign");
+				String id = getId(tileEntityData);
+				// pre 1.11 and 1.11+ ids:
+				return id.equals("Sign") || id.equals("minecraft:sign");
 			}
 
 			public static String[] getText(NbtCompound tileEntitySignData) {
