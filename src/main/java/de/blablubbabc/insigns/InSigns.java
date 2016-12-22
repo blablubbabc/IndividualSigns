@@ -24,6 +24,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -222,6 +223,10 @@ public class InSigns extends JavaPlugin implements Listener {
 		protocolManager = null;
 	}
 
+	public int getPlayerJoinSignUpdateDelay() {
+		return this.getConfig().getInt("player-join-sign-update-delay", 2);
+	}
+
 	private SignSendEvent callSignSendEvent(Player player, Location location, String[] rawLines) {
 		// call the SignSendEvent:
 		SignSendEvent signSendEvent = new SignSendEvent(player, location, rawLines);
@@ -230,7 +235,7 @@ public class InSigns extends JavaPlugin implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	void onInteract(PlayerInteractEvent event) {
+	void onPlayerInteract(PlayerInteractEvent event) {
 		// ignore off-hand interactions:
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
@@ -241,6 +246,29 @@ public class InSigns extends JavaPlugin implements Listener {
 				Sign sign = (Sign) block.getState();
 				sendSignChange(event.getPlayer(), sign);
 			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	void onPlayerJoin(PlayerJoinEvent event) {
+		int updateDelay = this.getPlayerJoinSignUpdateDelay();
+		if (updateDelay <= 0) return;
+		final Player player = event.getPlayer();
+		final List<Sign> nearbySigns = Utils.getNearbyTileEntities(player.getLocation(), Bukkit.getViewDistance(), Sign.class);
+		if (!nearbySigns.isEmpty()) {
+			Bukkit.getScheduler().runTaskLater(this, new Runnable() {
+
+				@Override
+				public void run() {
+					if (!player.isOnline()) return;
+					for (Sign sign : nearbySigns) {
+						if (Utils.isSignBlock(sign.getBlock().getType())) {
+							// still a sign there, send update:
+							player.sendSignChange(sign.getLocation(), sign.getLines());
+						}
+					}
+				}
+			}, updateDelay);
 		}
 	}
 
