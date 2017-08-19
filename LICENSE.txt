@@ -1,2 +1,87 @@
 Copyright (c) blablubbabc <http://www.blablubbabc.de>
 All rights reserved.
+
+The accompanying software is provided under the terms of this license.
+
+Grant of rights:
+   1. You are permitted to install, run and publicly perform the software.
+
+   2. Modifications:
+      You are permitted to modify the software, run, publicly perform and share
+      your modifications under the following terms:
+        a) You must retain all copyright, author and attribution notices.
+        b) You must prominently mention the original author(s), where users can
+           find the original software and that you are running a modified
+           version to all users interacting with the software directly or
+           remotely over a computer network.
+        c) Don't include any content of the original work in your distribution.
+           Instead you can distribute patches and instructions on how to apply
+           your modifications to the original work. Recipients of your
+           modifications must be required to manually download the original
+           work from an official source in order to be able to apply your
+           modifications.
+        d) You cannot sell or charge a fee for sharing your modifications or
+           tools required to apply them.
+        e) By sharing your modifications you automatically agree to grant the
+           author(s) and recipients of the original software a perpetual,
+           worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+           copyright license to reproduce, prepare derivative works of,
+           publicly display, publicly perform, sublicense and distribute your
+           modifications and such derivative works.
+
+   3. Derivative ('related') works:
+      You are permitted to create, run, publicly perform and share software,
+      services or content which adds or modifies functionality or content
+      related to the software under the following terms:
+        a) Don't include any content of the original work in your related work.
+        b) You must prominently mention where users of your derivative work can
+           find the original software.
+        c) You must make sure that your derivative work keeps all
+           functionality, content and output of the original software intact,
+           which involves notices about the copyright, the author(s) and the
+           source of the original software.
+        d) You must prominently mention that recipients and users of your
+           derivative work cannot use your derivative work for commercial
+           purposes, except in the scope allowed by this license (section 4).
+
+   4. Non-Commercial:
+      You may not use the software, any derivative works, or unrelated works,
+      services or content in a way related to the software for commercial
+      purposes, with the following exceptions:
+        a) Commercial use based on advertising is allowed.
+        b) To the extent permitted by the other terms of this license, you are
+           allowed to sell derivative ('related') works which you have created.
+      You are not allowed to sell users of the software access to any 'in-game'
+      content, features, abilities or services related to the software, even
+      if that content or services were created by yourself.
+
+   5. No redistributions:
+      You may not redistribute any copy or parts of the software you received.
+
+   6. Non-Assignable & Non-Transferable:
+      You may not assign or transfer your rights and duties under this license.
+
+Liability:
+      The software is provided 'AS-IS', and any express or implied warranties,
+      as well as any express or implied fitness for a particular purpose, are
+      disclaimed. In no event shall the author(s) or contributors be liable for
+      any direct, indirect or consequential damages or expenses arising in any
+      way out of the use of the software.
+
+Termination:
+      You may not use the software except as expressly provided under the terms
+      and conditions of this license. Any attempt to otherwise use the
+      software, or taking action which could cause the licensor to not be able
+      to enforce his rights under this license will automatically terminate
+      your rights under this license.
+      The licensor reserves the right to revoke or change this license at any
+      time without notice. For that reason this license expires 90 days after
+      you have received your copy of the software. Any continued use of the
+      software beyond that is governed by the new license terms.
+
+Acceptance:
+      You do not have to accept this license in order to receive or run a copy
+      of the software. However, only this license grants you the permission to
+      use the software in the scope defined by this license. So by using the
+      software you indicate your acceptance of this license, because otherwise
+      doing so (without accepting this license) would infringe copyright.
