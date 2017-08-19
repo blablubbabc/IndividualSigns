@@ -41,17 +41,14 @@ repositories {
 		url 'https://hub.spigotmc.org/nexus/content/groups/public/'
 	}
 	maven {
-		url 'http://repo.dmulloy2.net/content/groups/public/'
-	}
-	maven {
-		url 'http://repo.comphenix.net/content/groups/public/'
+		url 'http://repo.dmulloy2.net/nexus/repository/public/'
 	}
 	mavenCentral()
 }
 
 dependencies {
 	compile 'org.bukkit:bukkit:1.9.4-R0.1-SNAPSHOT'
-	compile 'com.comphenix.protocol:ProtocolLib:4.0.0-SNAPSHOT'
+	compile 'com.comphenix.protocol:ProtocolLib:4.2.1'
 }
 
 // include and filter resources
