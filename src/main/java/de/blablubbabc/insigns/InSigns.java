@@ -242,7 +242,7 @@ public class InSigns extends JavaPlugin implements Listener {
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null) {
 			Block block = event.getClickedBlock();
 			Material blockType = block.getType();
-			if (blockType == Material.WALL_SIGN || blockType == Material.SIGN_POST) {
+			if (blockType == Material.WALL_SIGN || blockType == Material.SIGN) {
 				Sign sign = (Sign) block.getState();
 				sendSignChange(event.getPlayer(), sign);
 			}
@@ -262,7 +262,7 @@ public class InSigns extends JavaPlugin implements Listener {
 				public void run() {
 					if (!player.isOnline()) return;
 					for (Sign sign : nearbySigns) {
-						if (Utils.isSignBlock(sign.getBlock().getType())) {
+						if (Utils.isSign(sign.getBlock().getType())) {
 							// still a sign there, send update:
 							player.sendSignChange(sign.getLocation(), sign.getLines());
 						}

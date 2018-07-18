@@ -19,8 +19,8 @@ public class Utils {
 	private Utils() {
 	}
 
-	public static boolean isSignBlock(Material material) {
-		return material == Material.SIGN_POST || material == Material.WALL_SIGN;
+	public static boolean isSign(Material material) {
+		return material == Material.SIGN || material == Material.WALL_SIGN;
 	}
 
 	public static <T extends BlockState> List<T> getNearbyTileEntities(Location location, int chunkRadius, Class<T> type) {
