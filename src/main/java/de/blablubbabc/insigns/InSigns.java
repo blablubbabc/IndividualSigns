@@ -5,10 +5,8 @@
 package de.blablubbabc.insigns;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -20,7 +18,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -42,8 +39,6 @@ import com.comphenix.protocol.wrappers.nbt.NbtWrapper;
 
 public class InSigns extends JavaPlugin implements Listener {
 
-	@Deprecated
-	private final Map<Changer, SimpleChanger> changers = new HashMap<>();
 	private ProtocolManager protocolManager;
 
 	@Override
@@ -240,8 +235,10 @@ public class InSigns extends JavaPlugin implements Listener {
 			Block block = event.getClickedBlock();
 			Material blockType = block.getType();
 			if (blockType == Material.WALL_SIGN || blockType == Material.SIGN) {
+				// send sign update:
+				Player player = event.getPlayer();
 				Sign sign = (Sign) block.getState();
-				sendSignChange(event.getPlayer(), sign);
+				player.sendSignChange(sign.getLocation(), sign.getLines());
 			}
 		}
 	}
@@ -267,69 +264,5 @@ public class InSigns extends JavaPlugin implements Listener {
 				}
 			}, updateDelay);
 		}
-	}
-
-	// API
-
-	/**
-	 * Gets the list of all registered Changers.
-	 * 
-	 * @return A list of all active Changers.
-	 */
-	@Deprecated
-	public synchronized List<Changer> getChangerList() {
-		return new ArrayList<>(changers.keySet());
-	}
-
-	/**
-	 * Sends an UpdateSign-Packet to the specified player. This is used to update a sign for the
-	 * specified user only.
-	 * 
-	 * @param player
-	 *            The player receiving the sign update.
-	 * @param sign
-	 *            The sign to send.
-	 */
-	public static void sendSignChange(Player player, Sign sign) {
-		if (player == null || !player.isOnline()) return;
-		if (sign == null) return;
-
-		player.sendSignChange(sign.getLocation(), sign.getLines());
-	}
-
-	/**
-	 * Removes a Changer for the list of active Changers.
-	 * 
-	 * @param changer
-	 *            The changer that shall be removed.
-	 */
-	@Deprecated
-	public synchronized void removeChanger(Changer changer) {
-		SimpleChanger changerAdapter = changers.remove(changer);
-		HandlerList.unregisterAll(changerAdapter);
-	}
-
-	/**
-	 * Registers a Changer. By adding a Changer text on signs that matches the key of this Changer
-	 * will get replaced with the individual value specified by the Changers getValue() method.
-	 * This will replace the active Changer with an equal key if there is such.
-	 * 
-	 * @param changer
-	 *            The Changer handling the replacement of sign text.
-	 */
-	@Deprecated
-	public synchronized void addChanger(final Changer changer) {
-		if (changer == null) {
-			throw new IllegalArgumentException("Changer cannot be null!");
-		}
-		// for now to keep compatible to the older api: create adapter sign send listeners:
-		SimpleChanger oldChangerAdapter = changers.put(changer, new SimpleChanger(this, changer.getKey(), changer.getPerm()) {
-
-			@Override
-			public String getValue(Player player, Location location, String originalLine) {
-				return changer.getValue(player, location);
-			}
-		});
-		if (oldChangerAdapter != null) HandlerList.unregisterAll(oldChangerAdapter);
 	}
 }
