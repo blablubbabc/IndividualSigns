@@ -9,6 +9,7 @@ buildscript {
 
 	dependencies {
 		classpath 'gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:0.12.1'
+		classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
 	}
 }
 
@@ -19,6 +20,7 @@ apply plugin: 'com.github.hierynomus.license'
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'eclipse'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 // default tasks
 defaultTasks 'clean', 'license', 'check', 'build', 'install'
@@ -26,7 +28,7 @@ defaultTasks 'clean', 'license', 'check', 'build', 'install'
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
-group = 'de.blablubbabc'
+group = 'de.blablubbabc.insigns'
 version = projectVersion
 
 ext.projectName = projectName
@@ -43,12 +45,21 @@ repositories {
 	maven {
 		url 'http://repo.dmulloy2.net/nexus/repository/public/'
 	}
+	maven {
+		url 'http://repo.bstats.org/content/repositories/releases/'
+	}
 	mavenCentral()
 }
 
+configurations {
+	shade
+	compile.extendsFrom shade
+}
+
 dependencies {
-	compile 'org.bukkit:bukkit:1.13.1-R0.1-SNAPSHOT'
-	compile 'com.comphenix.protocol:ProtocolLib:4.4.0'
+	compileOnly 'org.bukkit:bukkit:1.13.1-R0.1-SNAPSHOT'
+	compileOnly 'com.comphenix.protocol:ProtocolLib:4.4.0'
+	shade 'org.bstats:bstats-bukkit:1.2'
 }
 
 // include and filter resources
@@ -89,8 +100,14 @@ configure([compileJava, compileTestJava]) {
 	options.encoding = 'utf8'
 }
 
+shadowJar {
+	configurations = [project.configurations.shade]
+	classifier = null
+	relocate 'org.bstats.bukkit', project.group + '.metrics.bstats'
+}
+
 artifacts {
-	archives jar
+	archives shadowJar
 }
 
 uploadArchives {

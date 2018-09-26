@@ -4,13 +4,13 @@
  */
 package de.blablubbabc.insigns;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -39,8 +39,6 @@ import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import com.comphenix.protocol.wrappers.nbt.NbtWrapper;
-
-import de.blablubbabc.insigns.thirdparty.MetricsLite;
 
 public class InSigns extends JavaPlugin implements Listener {
 
@@ -209,18 +207,17 @@ public class InSigns extends JavaPlugin implements Listener {
 		});
 
 		if (this.getConfig().getBoolean("metrics-stats", true)) {
-			try {
-				MetricsLite metrics = new MetricsLite(this);
-				metrics.start();
-			} catch (IOException e) {
-				// Failed to submit the stats :-(
-			}
+			this.setupMetrics();
 		}
 	}
 
 	@Override
 	public void onDisable() {
 		protocolManager = null;
+	}
+
+	private void setupMetrics() {
+		new Metrics(this);
 	}
 
 	public int getPlayerJoinSignUpdateDelay() {
