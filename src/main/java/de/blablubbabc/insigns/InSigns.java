@@ -234,7 +234,7 @@ public class InSigns extends JavaPlugin implements Listener {
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null) {
 			Block block = event.getClickedBlock();
 			Material blockType = block.getType();
-			if (blockType == Material.WALL_SIGN || blockType == Material.SIGN) {
+			if (Utils.isSign(blockType)) {
 				// send sign update:
 				Player player = event.getPlayer();
 				Sign sign = (Sign) block.getState();
