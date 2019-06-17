@@ -45,8 +45,9 @@ repositories {
 	maven {
 		url 'http://repo.dmulloy2.net/nexus/repository/public/'
 	}
+	// bstats
 	maven {
-		url 'http://repo.bstats.org/content/repositories/releases/'
+		url 'https://repo.codemc.org/repository/maven-public'
 	}
 	mavenCentral()
 }
@@ -59,7 +60,7 @@ configurations {
 dependencies {
 	compileOnly 'org.bukkit:bukkit:1.14.2-R0.1-SNAPSHOT'
 	compileOnly 'com.comphenix.protocol:ProtocolLib:4.4.0'
-	shade 'org.bstats:bstats-bukkit:1.2'
+	shade 'org.bstats:bstats-bukkit:1.5'
 }
 
 // include and filter resources

@@ -7,6 +7,7 @@ Date format: (YYYY-MM-DD)
 ## v2.7.0 Release (2019-06-17)
 ### Supported MC versions: 1.14
 * Updated for MC 1.14. Support for MC 1.13.x was dropped.
+* Updated bstats to version 1.5.
 
 ## v2.6.0 Release (2018-09-27)
 ### Supported MC versions: 1.13.1
