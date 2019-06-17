@@ -6,7 +6,6 @@ package de.blablubbabc.insigns;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 
 import org.bukkit.Chunk;
@@ -20,34 +19,10 @@ public class Utils {
 	private Utils() {
 	}
 
-	private final static EnumSet<Material> SIGNS = EnumSet.noneOf(Material.class);
-
-	static {
-		addSignMaterialByName("SIGN");
-		addSignMaterialByName("WALL_SIGN");
-		addSignMaterialByName("OAK_SIGN");
-		addSignMaterialByName("OAK_WALL_SIGN");
-		addSignMaterialByName("BIRCH_SIGN");
-		addSignMaterialByName("BIRCH_WALL_SIGN");
-		addSignMaterialByName("SPRUCE_SIGN");
-		addSignMaterialByName("SPRUCE_WALL_SIGN");
-		addSignMaterialByName("JUNGLE_SIGN");
-		addSignMaterialByName("JUNGLE_WALL_SIGN");
-		addSignMaterialByName("DARK_OAK_SIGN");
-		addSignMaterialByName("DARK_OAK_WALL_SIGN");
-		addSignMaterialByName("ACACIA_SIGN");
-		addSignMaterialByName("ACACIA_WALL_SIGN");
-	}
-
-	private static void addSignMaterialByName(String materialName) {
-		Material material = Material.getMaterial(materialName);
-		if (material != null) {
-			SIGNS.add(material);
-		}
-	}
-
 	public static boolean isSign(Material material) {
-		return SIGNS.contains(material);
+		if (material == null) return false;
+		return (material.data == org.bukkit.block.data.type.Sign.class)
+				|| (material.data == org.bukkit.block.data.type.WallSign.class);
 	}
 
 	public static <T extends BlockState> List<T> getNearbyTileEntities(Location location, int chunkRadius, Class<T> type) {
