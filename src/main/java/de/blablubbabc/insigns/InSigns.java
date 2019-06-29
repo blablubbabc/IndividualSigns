@@ -247,22 +247,14 @@ public class InSigns extends JavaPlugin implements Listener {
 	void onPlayerJoin(PlayerJoinEvent event) {
 		int updateDelay = this.getPlayerJoinSignUpdateDelay();
 		if (updateDelay <= 0) return;
-		final Player player = event.getPlayer();
-		final List<Sign> nearbySigns = Utils.getNearbyTileEntities(player.getLocation(), Bukkit.getViewDistance(), Sign.class);
-		if (!nearbySigns.isEmpty()) {
-			Bukkit.getScheduler().runTaskLater(this, new Runnable() {
-
-				@Override
-				public void run() {
-					if (!player.isOnline()) return;
-					for (Sign sign : nearbySigns) {
-						if (Utils.isSign(sign.getBlock().getType())) {
-							// still a sign there, send update:
-							player.sendSignChange(sign.getLocation(), sign.getLines());
-						}
-					}
-				}
-			}, updateDelay);
-		}
+		Player player = event.getPlayer();
+		// update nearby signs after a short delay:
+		Bukkit.getScheduler().runTaskLater(this, () -> {
+			if (!player.isOnline()) return;
+			List<Sign> nearbySigns = Utils.getNearbyTileEntities(player.getLocation(), Bukkit.getViewDistance(), Sign.class);
+			for (Sign sign : nearbySigns) {
+				player.sendSignChange(sign.getLocation(), sign.getLines());
+			}
+		}, updateDelay);
 	}
 }
