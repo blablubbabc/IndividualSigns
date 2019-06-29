@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -239,7 +238,7 @@ public class InSigns extends JavaPlugin implements Listener {
 				// send sign update:
 				Player player = event.getPlayer();
 				Sign sign = (Sign) block.getState();
-				player.sendSignChange(sign.getLocation(), sign.getLines(), sign.getColor() == null ? DyeColor.BLACK : sign.getColor());
+				player.sendSignChange(sign.getLocation(), sign.getLines(), Utils.getSignTextColor(sign));
 			}
 		}
 	}
@@ -259,7 +258,7 @@ public class InSigns extends JavaPlugin implements Listener {
 					for (Sign sign : nearbySigns) {
 						if (Utils.isSign(sign.getBlock().getType())) {
 							// still a sign there, send update:
-							player.sendSignChange(sign.getLocation(), sign.getLines(), sign.getColor() == null ? DyeColor.BLACK : sign.getColor());
+							player.sendSignChange(sign.getLocation(), sign.getLines(), Utils.getSignTextColor(sign));
 						}
 					}
 				}

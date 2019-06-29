@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Chunk;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -23,6 +24,13 @@ public class Utils {
 		if (material == null) return false;
 		return (material.data == org.bukkit.block.data.type.Sign.class)
 				|| (material.data == org.bukkit.block.data.type.WallSign.class);
+	}
+
+	// returns the sign's text color, or the default
+	public static DyeColor getSignTextColor(org.bukkit.block.Sign sign) {
+		assert sign != null;
+		DyeColor color = sign.getColor(); // can be null
+		return (color != null) ? color : DyeColor.BLACK; // default: black
 	}
 
 	public static <T extends BlockState> List<T> getNearbyTileEntities(Location location, int chunkRadius, Class<T> type) {
