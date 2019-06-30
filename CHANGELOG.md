@@ -4,6 +4,12 @@ Date format: (YYYY-MM-DD)
 ## Next release
 ### Supported MC versions: xxx
 
+## v2.7.1 Release (TBA)
+### Supported MC versions: 1.14.3
+* Bumped Bukkit dependency to 1.14.3.
+* Fixed: Sign text sent after the join delay might be outdated.
+* Fixed: Sign updates do not take text color of dyed signs into account.
+
 ## v2.7.0 Release (2019-06-17)
 ### Supported MC versions: 1.14
 * Updated for MC 1.14. Support for MC 1.13.x was dropped.
