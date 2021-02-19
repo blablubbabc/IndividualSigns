@@ -1,16 +1,6 @@
-buildscript {
-	repositories {
-		jcenter()
-		mavenCentral()
-		maven {
-			url 'https://plugins.gradle.org/m2/'
-		}
-	}
-
-	dependencies {
-		classpath 'gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:0.12.1'
-		classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
-	}
+plugins {
+	id 'com.github.hierynomus.license' version '0.15.0'
+	id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
 import org.apache.tools.ant.filters.*
@@ -21,6 +11,12 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'eclipse'
 apply plugin: 'com.github.johnrengelman.shadow'
+
+eclipse {
+	project {
+		name = 'IndividualSigns'
+	}
+}
 
 // default tasks
 defaultTasks 'clean', 'license', 'check', 'build', 'install'
