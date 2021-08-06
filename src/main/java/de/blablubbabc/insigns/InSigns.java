@@ -212,7 +212,7 @@ public class InSigns extends JavaPlugin implements Listener {
 	}
 
 	private void setupMetrics() {
-		new Metrics(this);
+		new Metrics(this, 3341);
 	}
 
 	public int getPlayerJoinSignUpdateDelay() {
@@ -238,7 +238,7 @@ public class InSigns extends JavaPlugin implements Listener {
 				// send sign update:
 				Player player = event.getPlayer();
 				Sign sign = (Sign) block.getState();
-				player.sendSignChange(sign.getLocation(), sign.getLines(), Utils.getSignTextColor(sign));
+				player.sendSignChange(sign.getLocation(), sign.getLines(), Utils.getSignTextColor(sign), sign.isGlowingText());
 			}
 		}
 	}
@@ -253,7 +253,7 @@ public class InSigns extends JavaPlugin implements Listener {
 			if (!player.isOnline()) return;
 			List<Sign> nearbySigns = Utils.getNearbyTileEntities(player.getLocation(), Bukkit.getViewDistance(), Sign.class);
 			for (Sign sign : nearbySigns) {
-				player.sendSignChange(sign.getLocation(), sign.getLines(), Utils.getSignTextColor(sign));
+				player.sendSignChange(sign.getLocation(), sign.getLines(), Utils.getSignTextColor(sign), sign.isGlowingText());
 			}
 		}, updateDelay);
 	}
