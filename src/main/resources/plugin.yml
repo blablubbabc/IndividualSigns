@@ -5,7 +5,7 @@ authors: [${authors}]
 website: '${url}'
 description: '${description}'
 depend: [ProtocolLib]
-api-version: 1.14
+api-version: 1.17
 permissions:
   insigns.create.player:
     description: Ability to create signs displaying individual player names.

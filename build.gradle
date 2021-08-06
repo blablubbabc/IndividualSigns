@@ -1,14 +1,13 @@
 plugins {
-	id 'com.github.hierynomus.license' version '0.15.0'
-	id 'com.github.johnrengelman.shadow' version '5.2.0'
+	id 'com.github.hierynomus.license' version '0.16.1'
+	id 'com.github.johnrengelman.shadow' version '7.0.0'
 }
 
 import org.apache.tools.ant.filters.*
 
-apply plugin: 'com.github.hierynomus.license'
 
 apply plugin: 'java'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 apply plugin: 'eclipse'
 apply plugin: 'com.github.johnrengelman.shadow'
 
@@ -19,10 +18,10 @@ eclipse {
 }
 
 // default tasks
-defaultTasks 'clean', 'license', 'check', 'build', 'install'
+defaultTasks 'clean', 'license', 'check', 'build', 'publishToMavenLocal'
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+sourceCompatibility = '1.16'
+targetCompatibility = '1.16'
 
 group = 'de.blablubbabc.insigns'
 version = projectVersion
@@ -39,7 +38,7 @@ repositories {
 		url 'https://hub.spigotmc.org/nexus/content/groups/public/'
 	}
 	maven {
-		url 'http://repo.dmulloy2.net/nexus/repository/public/'
+		url 'https://repo.dmulloy2.net/nexus/repository/public/'
 	}
 	// bstats
 	maven {
@@ -50,17 +49,19 @@ repositories {
 
 configurations {
 	shade
-	compile.extendsFrom shade
+	compileClasspath.extendsFrom shade
 }
 
 dependencies {
-	compileOnly 'org.bukkit:bukkit:1.14.3-R0.1-SNAPSHOT'
-	compileOnly 'com.comphenix.protocol:ProtocolLib:4.4.0'
-	shade 'org.bstats:bstats-bukkit:1.5'
+	compileOnly 'org.bukkit:bukkit:1.17.1-R0.1-SNAPSHOT'
+	compileOnly 'com.comphenix.protocol:ProtocolLib:4.7.0'
+	shade 'org.bstats:bstats-bukkit:2.2.1'
 }
 
 // include and filter resources
 processResources {
+	duplicatesStrategy = 'exclude'
+
 	from ('LICENSE.txt')
 	from(sourceSets.main.resources.srcDirs)
 	filter {
@@ -99,18 +100,18 @@ configure([compileJava, compileTestJava]) {
 
 shadowJar {
 	configurations = [project.configurations.shade]
-	classifier = null
-	relocate 'org.bstats.bukkit', project.group + '.metrics.bstats'
+	archiveClassifier.set('')
+	relocate 'org.bstats', project.group + '.metrics.bstats'
 }
 
 artifacts {
 	archives shadowJar
 }
 
-uploadArchives {
-	repositories {
-		mavenDeployer {
-			mavenLocal()
+publishing {
+	publications {
+		shadow(MavenPublication) {
+			from components.java
 		}
 	}
 }
