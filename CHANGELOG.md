@@ -4,11 +4,15 @@ Date format: (YYYY-MM-DD)
 ## Next release
 ### Supported MC versions: xxx
 
-## v2.7.1 Release (TBA)
-### Supported MC versions: 1.14.3
-* Bumped Bukkit dependency to 1.14.3.
+## v2.8.0 Release (TBA)
+### Supported MC versions: 1.17.1
+* Bumped the Bukkit dependency to 1.17.1. This version is not compatible with older Bukkit versions.
+* Bumped the ProtocolLib dependency to version 4.7.0.
 * Fixed: Sign text sent after the join delay might be outdated.
-* Fixed: Sign updates do not take text color of dyed signs into account.
+* Fixed: Sign updates did not take text color of dyed signs into account.
+* Fixed: Sign updates did not take the glowing state (MC 1.17) into account.
+* Internal: Updated bStats to version 2.2.1.
+* Internal: Updated to Gradle 7.1.1.
 
 ## v2.7.0 Release (2019-06-17)
 ### Supported MC versions: 1.14
