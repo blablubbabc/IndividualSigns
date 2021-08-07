@@ -12,14 +12,17 @@ import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 
 public class ProtocolUtils {
+
 	private ProtocolUtils() {
 	}
 
 	public static class Packet {
+
 		private Packet() {
 		}
 
 		public static class TileEntityData {
+
 			private TileEntityData() {
 			}
 
@@ -60,6 +63,7 @@ public class ProtocolUtils {
 		}
 
 		public static class MapChunk {
+
 			private MapChunk() {
 			}
 
@@ -83,6 +87,7 @@ public class ProtocolUtils {
 	}
 
 	public static class TileEntity {
+
 		private TileEntity() {
 		}
 
@@ -107,13 +112,13 @@ public class ProtocolUtils {
 		}
 
 		public static class Sign {
+
 			private Sign() {
 			}
 
 			public static boolean isTileEntitySignData(NbtCompound tileEntityData) {
 				String id = getId(tileEntityData);
-				// pre 1.11 and 1.11+ ids:
-				return id.equals("Sign") || id.equals("minecraft:sign");
+				return id.equals("minecraft:sign");
 			}
 
 			public static String[] getText(NbtCompound tileEntitySignData) {
