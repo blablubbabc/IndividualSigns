@@ -11,6 +11,9 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 
+/**
+ * Utilities for reading and writing packet contents.
+ */
 public class ProtocolUtils {
 
 	private ProtocolUtils() {

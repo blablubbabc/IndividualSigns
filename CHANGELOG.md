@@ -13,6 +13,7 @@ Date format: (YYYY-MM-DD)
 * Fixed: Sign updates did not take the glowing state (MC 1.17) into account.
 * Internal: Updated bStats to version 2.2.1.
 * Internal: Updated to Gradle 7.1.1.
+* Internal: Various minor refactors and cleanup.
 
 ## v2.7.0 Release (2019-06-17)
 ### Supported MC versions: 1.14
