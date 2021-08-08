@@ -11,6 +11,7 @@ Date format: (YYYY-MM-DD)
 * Fixed: Sign text sent after the join delay might be outdated.
 * Fixed: Sign updates did not take text color of dyed signs into account.
 * Fixed: Sign updates did not take the glowing state (MC 1.17) into account.
+* API: Deprecated SimpleChange#getValue(Player, Location, String) and added a replacement #getValue(Player, Location). This method is only invoked once per sent sign now and no longer provides the original sign line. The returned value is reused for all occurrences of the key within the text of the sent sign.
 * Internal: Updated bStats to version 2.2.1.
 * Internal: Updated to Gradle 7.1.1.
 * Internal: Various minor refactors and cleanup.

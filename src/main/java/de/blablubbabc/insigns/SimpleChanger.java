@@ -55,27 +55,52 @@ public class SimpleChanger implements Listener {
 	/**
 	 * Gets the value that replaces the {@code key} within the text of a sign that is being sent to the specified
 	 * player.
-	 * <p>
-	 * This is called for every line of sign text that contains the key.
 	 * 
 	 * @param player
 	 *            the player receiving the new sign text
-	 * @param location
+	 * @param signLocation
 	 *            the location of the sign
 	 * @param originalLine
-	 *            the original line of sign text that is being modified
-	 * @return the value
+	 *            this parameter is no longer used and simply matches the key
+	 * @return the value, not <code>null</code>
+	 * @deprecated Use {@link #getValue(Player, Location)} instead.
 	 */
-	public String getValue(Player player, Location location, String originalLine) {
+	@Deprecated // Since 2.8.0
+	public String getValue(Player player, Location signLocation, String originalLine) {
+		return this.getValue(player, signLocation); // Delegate to the new method
+	}
+
+	/**
+	 * Gets the value that replaces the {@code key} within the text of a sign that is being sent to the specified
+	 * player.
+	 * <p>
+	 * This is called at most once per sign whose text is being sent to the player. The returned value is then reused
+	 * for all occurrences of the key within the text of this sign.
+	 * 
+	 * @param player
+	 *            the player receiving the new sign text
+	 * @param signLocation
+	 *            the location of the sign
+	 * @return the value, not <code>null</code>
+	 */
+	public String getValue(Player player, Location signLocation) {
 		return key;
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onSignSend(SignSendEvent event) {
+		String value = null;
 		for (int i = 0; i < 4; i++) {
 			String line = event.getLine(i);
 			if (line.contains(key)) {
-				event.setLine(i, line.replace(key, this.getValue(event.getPlayer(), event.getLocation(), line)));
+				if (value == null) {
+					value = this.getValue(event.getPlayer(), event.getLocation(), key);
+					// Ensure that the value is no longer null so that we request it at most once per sent sign:
+					if (value == null) {
+						value = "null";
+					}
+				}
+				event.setLine(i, line.replace(key, value));
 			}
 		}
 	}
