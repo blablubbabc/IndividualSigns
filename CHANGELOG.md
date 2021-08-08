@@ -4,7 +4,7 @@ Date format: (YYYY-MM-DD)
 ## Next release
 ### Supported MC versions: xxx
 
-## v2.8.0 Release (TBA)
+## v2.8.0 Release (2021-08-08)
 ### Supported MC versions: 1.17.1
 * Bumped the Bukkit dependency to 1.17.1. This version is not compatible with older Bukkit versions.
 * Bumped the ProtocolLib dependency to version 4.7.0.
