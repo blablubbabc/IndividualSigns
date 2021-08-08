@@ -23,9 +23,8 @@ class DefaultReplacements {
 		// [PLAYER] -> Player's name
 		// Permission: 'insigns.create.player'
 		new SimpleChanger(plugin, "[PLAYER]", "insigns.create.player") {
-
 			@Override
-			public String getValue(Player player, Location location, String originalLine) {
+			public String getValue(Player player, Location location) {
 				return player.getName();
 			}
 		};
@@ -33,9 +32,8 @@ class DefaultReplacements {
 		// [DISPLAY] -> Player's display name
 		// Permission: 'insigns.create.displayname'
 		new SimpleChanger(plugin, "[DISPLAY]", "insigns.create.display") {
-
 			@Override
-			public String getValue(Player player, Location location, String originalLine) {
+			public String getValue(Player player, Location location) {
 				return player.getDisplayName();
 			}
 		};
