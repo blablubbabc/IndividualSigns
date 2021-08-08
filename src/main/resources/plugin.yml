@@ -1,11 +1,12 @@
 name: InSigns
 main: de.blablubbabc.insigns.InSigns
 version: '${version}'
-authors: [${authors}]
-website: '${url}'
+authors: [blablubbabc]
+website: '${dboUrl}'
 description: '${description}'
 depend: [ProtocolLib]
 api-version: 1.17
+
 permissions:
   insigns.create.player:
     description: Ability to create signs displaying individual player names.

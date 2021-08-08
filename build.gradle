@@ -1,46 +1,23 @@
 plugins {
+	id 'java-library'
+	id 'maven-publish'
 	id 'com.github.hierynomus.license' version '0.16.1'
 	id 'com.github.johnrengelman.shadow' version '7.0.0'
 }
 
-import org.apache.tools.ant.filters.*
-
-
-apply plugin: 'java'
-apply plugin: 'maven-publish'
-apply plugin: 'eclipse'
-apply plugin: 'com.github.johnrengelman.shadow'
-
-eclipse {
-	project {
-		name = 'IndividualSigns'
-	}
-}
-
-// default tasks
-defaultTasks 'clean', 'license', 'check', 'build', 'publishToMavenLocal'
-
-sourceCompatibility = '1.16'
-targetCompatibility = '1.16'
-
-group = 'de.blablubbabc.insigns'
-version = projectVersion
-
-ext.projectName = projectName
-ext.url = url
-ext.description = description
-ext.authors = authors
-ext.author = authors.split(',\\s*')[0]
+defaultTasks 'clean', 'license', 'build', 'publishToMavenLocal'
 
 repositories {
 	mavenLocal()
+	// Bukkit / Spigot API
 	maven {
 		url 'https://hub.spigotmc.org/nexus/content/groups/public/'
 	}
+	// ProtocolLib
 	maven {
 		url 'https://repo.dmulloy2.net/nexus/repository/public/'
 	}
-	// bstats
+	// bStats
 	maven {
 		url 'https://repo.codemc.org/repository/maven-public'
 	}
@@ -58,31 +35,33 @@ dependencies {
 	shade 'org.bstats:bstats-bukkit:2.2.1'
 }
 
-// include and filter resources
-processResources {
-	duplicatesStrategy = 'exclude'
+java {
+	sourceCompatibility = JavaVersion.VERSION_16
+}
 
-	from ('LICENSE.txt')
-	from(sourceSets.main.resources.srcDirs)
-	filter {
-			line ->
-			line
-			.replace('${name}', project.name)
-			.replace('${version}', project.version)
-			.replace('${author}', project.author)
-			.replace('${authors}', project.authors)
-			.replace('${url}', project.url)
-			.replace('${description}', project.description)
+processResources {
+	from file('LICENSE.txt')
+	from sourceSets.main.resources.srcDirs
+	// TODO Some plugins might add resource directories twice.
+	// See https://github.com/gradle/gradle/issues/17236
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+	filesMatching('plugin.yml') {
+		expand([
+			'version': project.version,
+			'description': project.description,
+			'dboUrl': project.dboUrl
+		])
 	}
 }
 
-// license header
-license {
-	ext.name = project.name
-	ext.author = project.author
-	ext.authors = project.authors
-	ext.url = project.url
+jar {
+	// We only require the output of the shadowJar task.
+	enabled false
+}
 
+// License header
+license {
 	header file('HEADER.txt')
 	include '**/*.java'
 	exclude '**/thirdparty/**'
@@ -91,17 +70,21 @@ license {
 	strictCheck true
 }
 
-// source compiler configuration
 configure([compileJava, compileTestJava]) {
-	//options.compilerArgs += [ '-Xlint:all', '-Xlint:-path' ]
-	options.deprecation = false
-	options.encoding = 'utf8'
+	options.encoding = 'UTF-8'
 }
 
 shadowJar {
 	configurations = [project.configurations.shade]
-	archiveClassifier.set('')
-	relocate 'org.bstats', project.group + '.metrics.bstats'
+	archiveClassifier = ''
+	relocate 'org.bstats', "${project.group}.metrics.bstats"
+
+	// Include the generated Maven metadata:
+	into("META-INF/maven/$project.group/$project.name") {
+		from { generatePomFileForMavenJavaPublication } {
+			rename '.*', 'pom.xml'
+		}
+	}
 }
 
 artifacts {
@@ -110,8 +93,8 @@ artifacts {
 
 publishing {
 	publications {
-		shadow(MavenPublication) {
-			from components.java
+		mavenJava(MavenPublication) { publication ->
+			project.shadow.component(publication)
 		}
 	}
 }
