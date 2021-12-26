@@ -4,11 +4,16 @@
  */
 package de.blablubbabc.insigns;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.List;
 
 import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.events.InternalStructure;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.reflect.EquivalentConverter;
 import com.comphenix.protocol.wrappers.BlockPosition;
+import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 
 /**
@@ -65,7 +70,20 @@ public class ProtocolUtils {
 			}
 		}
 
+		@SuppressWarnings("unchecked")
 		public static class MapChunk {
+
+			private static final EquivalentConverter<InternalStructure> TILE_ENTITY_CONVERTER;
+			private static Constructor<?> tile_entity_constructor; // lazy initialisation
+			static {
+				try {
+					Field converterField = InternalStructure.class.getDeclaredField("CONVERTER");
+					converterField.setAccessible(true);
+					TILE_ENTITY_CONVERTER = (EquivalentConverter<InternalStructure>) converterField.get(null);
+				} catch (ReflectiveOperationException e) {
+					throw new RuntimeException("Could not get the tile entity converter", e);
+				}
+			}
 
 			private MapChunk() {
 			}
@@ -76,15 +94,59 @@ public class ProtocolUtils {
 				return true;
 			}
 
-			@SuppressWarnings("unchecked")
-			public static List<Object> getTileEntitiesData(PacketContainer packet) {
+			public static List<InternalStructure> getTileEntitiesData(PacketContainer packet) {
 				assert isMapChunkPacket(packet);
-				return packet.getSpecificModifier(List.class).read(0);
+				return packet.getStructures().read(0).getLists(TILE_ENTITY_CONVERTER).read(0);
 			}
 
-			public static void setTileEntitiesData(PacketContainer packet, List<Object> tileEntitiesData) {
+			public static void setTileEntitiesData(PacketContainer packet, List<InternalStructure> tileEntitiesData) {
 				assert isMapChunkPacket(packet);
-				packet.getSpecificModifier(List.class).write(0, tileEntitiesData);
+				packet.getStructures().read(0).getLists(TILE_ENTITY_CONVERTER).write(0, tileEntitiesData);
+			}
+
+			public static int getX(PacketContainer packet) {
+				return  packet.getIntegers().read(0);
+			}
+
+			public static int getZ(PacketContainer packet) {
+				return  packet.getIntegers().read(1);
+			}
+
+			public static NbtBase<?> getTileEntityNBT(InternalStructure tileEntityData) {
+				return tileEntityData.getNbtModifier().read(0);
+			}
+
+			public static int getTileEntityLocalX(InternalStructure tileEntityData) {
+				return  ((tileEntityData.getIntegers().read(0) >> 4) & 0xf);
+			}
+
+			public static int getTileEntityLocalZ(InternalStructure tileEntityData) {
+				return  (tileEntityData.getIntegers().read(0) & 0xf);
+			}
+
+			public static int getTileEntityY(InternalStructure tileEntityData) {
+				return tileEntityData.getIntegers().read(1);
+			}
+
+			public static InternalStructure cloneTileEntityDataWithNewNbt(InternalStructure tileEntityData, NbtCompound nbt) {
+				if (tile_entity_constructor == null) {
+					for (Constructor<?> c : tileEntityData.getHandle().getClass().getDeclaredConstructors()) {
+						if (c.getParameterCount() == 4) { // we are looking for the only constructor with 4 params
+							c.setAccessible(true);
+							tile_entity_constructor = c;
+							break;
+						}
+					}
+					if (tile_entity_constructor == null) {
+						throw new RuntimeException("Could not find the tile entity constructor");
+					}
+				}
+				try {
+					Object instance = tile_entity_constructor.newInstance(tileEntityData.getModifier().read(0), tileEntityData.getModifier().read(1), tileEntityData.getModifier().read(2), nbt.getHandle());
+					return TILE_ENTITY_CONVERTER.getSpecific(instance);
+				} catch (ReflectiveOperationException e) {
+					throw new RuntimeException("Could not invoke the tile entity constructor", e);
+				}
 			}
 		}
 	}
@@ -120,8 +182,7 @@ public class ProtocolUtils {
 			}
 
 			public static boolean isTileEntitySignData(NbtCompound tileEntityData) {
-				String id = getId(tileEntityData);
-				return id.equals("minecraft:sign");
+				return tileEntityData.containsKey("GlowingText");
 			}
 
 			public static String[] getText(NbtCompound tileEntitySignData) {

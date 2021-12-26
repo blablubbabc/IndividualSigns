@@ -16,14 +16,15 @@ import org.bukkit.entity.Player;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.InternalStructure;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.BlockPosition;
+import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
-import com.comphenix.protocol.wrappers.nbt.NbtWrapper;
 
 /**
  * Packet listeners that are responsible for calling the {@link SignSendEvent} and replacing the outgoing sign contents
@@ -60,15 +61,15 @@ class SignPacketListeners {
 	private void onTileEntityDataSending(PacketEvent event) {
 		PacketContainer packet = event.getPacket();
 		assert ProtocolUtils.Packet.TileEntityData.isTileEntityDataPacket(packet);
-		if (!ProtocolUtils.Packet.TileEntityData.isUpdateSignPacket(packet)) {
-			return; // Ignore
-		}
 
 		// Call the SignSendEvent:
 		Player player = event.getPlayer();
 		BlockPosition blockPosition = ProtocolUtils.Packet.TileEntityData.getBlockPosition(packet);
 		Location location = new Location(player.getWorld(), blockPosition.getX(), blockPosition.getY(), blockPosition.getZ());
 		NbtCompound signData = ProtocolUtils.Packet.TileEntityData.getTileEntityData(packet);
+		if (!ProtocolUtils.TileEntity.Sign.isTileEntitySignData(signData)) {
+			return; // Ignore
+		}
 		String[] rawLines = ProtocolUtils.TileEntity.Sign.getText(signData);
 
 		SignSendEvent signSendEvent = plugin.callSignSendEvent(player, location, rawLines);
@@ -100,21 +101,28 @@ class SignPacketListeners {
 
 		// Only replace the outgoing packet if needed:
 		PacketContainer outgoingPacket = null;
-		List<Object> outgoingTileEntitiesData = null;
+		List<InternalStructure> outgoingTileEntitiesData = null;
 		boolean removedSignData = false;
+		int chunkX = ProtocolUtils.Packet.MapChunk.getX(packet) * 16;
+		int chunkZ = ProtocolUtils.Packet.MapChunk.getZ(packet) * 16;
 
-		List<Object> tileEntitiesData = ProtocolUtils.Packet.MapChunk.getTileEntitiesData(packet);
+		List<InternalStructure> tileEntitiesData = ProtocolUtils.Packet.MapChunk.getTileEntitiesData(packet);
 		for (int index = 0, size = tileEntitiesData.size(); index < size; index++) {
-			Object nmsTileEntityData = tileEntitiesData.get(index);
-			NbtCompound tileEntityData = NbtFactory.fromNMSCompound(nmsTileEntityData);
+			InternalStructure nmsTileEntityData = tileEntitiesData.get(index);
+			NbtBase<?> nbt = ProtocolUtils.Packet.MapChunk.getTileEntityNBT(nmsTileEntityData);
+			if (nbt == null) {
+				continue;
+			}
+			NbtCompound tileEntityData = NbtFactory.asCompound(nbt);
+
 			if (!ProtocolUtils.TileEntity.Sign.isTileEntitySignData(tileEntityData)) {
 				continue; // Ignore
 			}
 
 			// Call the SignSendEvent:
-			int x = ProtocolUtils.TileEntity.getX(tileEntityData);
-			int y = ProtocolUtils.TileEntity.getY(tileEntityData);
-			int z = ProtocolUtils.TileEntity.getZ(tileEntityData);
+			int x = ProtocolUtils.Packet.MapChunk.getTileEntityLocalX(nmsTileEntityData) + chunkX;
+			int z = ProtocolUtils.Packet.MapChunk.getTileEntityLocalZ(nmsTileEntityData) + chunkZ;
+			int y = ProtocolUtils.Packet.MapChunk.getTileEntityY(nmsTileEntityData);
 			Location location = new Location(world, x, y, z);
 			String[] rawLines = ProtocolUtils.TileEntity.Sign.getText(tileEntityData);
 
@@ -141,7 +149,8 @@ class SignPacketListeners {
 					NbtCompound outgoingSignData = replaceSignData(tileEntityData, newLines);
 
 					// Replace the old sign data with the new modified sign data in the new outgoing packet:
-					outgoingTileEntitiesData.set(index, ((NbtWrapper<?>) outgoingSignData).getHandle());
+					InternalStructure newTileEntityData = ProtocolUtils.Packet.MapChunk.cloneTileEntityDataWithNewNbt(nmsTileEntityData, outgoingSignData);
+					outgoingTileEntitiesData.set(index, newTileEntityData);
 				}
 			}
 		}
@@ -149,7 +158,7 @@ class SignPacketListeners {
 		if (outgoingPacket != null) {
 			if (removedSignData) {
 				// Remove marked (null) tile entity data entries:
-				Iterator<Object> iter = outgoingTileEntitiesData.iterator();
+				Iterator<InternalStructure> iter = outgoingTileEntitiesData.iterator();
 				while (iter.hasNext()) {
 					if (iter.next() == null) {
 						iter.remove();
