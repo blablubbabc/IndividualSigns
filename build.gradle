@@ -30,13 +30,13 @@ configurations {
 }
 
 dependencies {
-	compileOnly 'org.bukkit:bukkit:1.17.1-R0.1-SNAPSHOT'
-	compileOnly 'com.comphenix.protocol:ProtocolLib:4.7.0'
+	compileOnly 'org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT'
+	compileOnly 'com.comphenix.protocol:ProtocolLib:4.8.0-SNAPSHOT'
 	shade 'org.bstats:bstats-bukkit:2.2.1'
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_16
+	sourceCompatibility = JavaVersion.VERSION_17
 }
 
 processResources {
