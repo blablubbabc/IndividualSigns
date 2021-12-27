@@ -15,6 +15,7 @@ import com.comphenix.protocol.reflect.EquivalentConverter;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
+import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 
 /**
  * Utilities for reading and writing packet contents.
@@ -40,13 +41,13 @@ public class ProtocolUtils {
 				return true;
 			}
 
-			public static final int UPDATE_SIGN_ACTION_ID = 9;
-
+			// TODO Update this to use the packet's BlockEntityType field to identify sign updates. However, ProtocolLib
+			// does not seem to offer some kind of converter for BlockEntityType yet (e.g. one that maps to a BlockState
+			// class, or some other closest Bukkit representation).
+			@Deprecated
 			public static boolean isUpdateSignPacket(PacketContainer packet) {
 				assert isTileEntityDataPacket(packet);
-				int actionId = packet.getIntegers().read(0);
-				if (actionId != UPDATE_SIGN_ACTION_ID) return false;
-				return true;
+				throw new UnsupportedOperationException("Outdated operation");
 			}
 
 			public static BlockPosition getBlockPosition(PacketContainer packet) {
@@ -70,20 +71,7 @@ public class ProtocolUtils {
 			}
 		}
 
-		@SuppressWarnings("unchecked")
 		public static class MapChunk {
-
-			private static final EquivalentConverter<InternalStructure> TILE_ENTITY_CONVERTER;
-			private static Constructor<?> tile_entity_constructor; // lazy initialisation
-			static {
-				try {
-					Field converterField = InternalStructure.class.getDeclaredField("CONVERTER");
-					converterField.setAccessible(true);
-					TILE_ENTITY_CONVERTER = (EquivalentConverter<InternalStructure>) converterField.get(null);
-				} catch (ReflectiveOperationException e) {
-					throw new RuntimeException("Could not get the tile entity converter", e);
-				}
-			}
 
 			private MapChunk() {
 			}
@@ -94,58 +82,97 @@ public class ProtocolUtils {
 				return true;
 			}
 
-			public static List<InternalStructure> getTileEntitiesData(PacketContainer packet) {
+			public static List<InternalStructure> getTileEntitiesInfo(PacketContainer packet) {
 				assert isMapChunkPacket(packet);
-				return packet.getStructures().read(0).getLists(TILE_ENTITY_CONVERTER).read(0);
+				return packet.getStructures().read(0).getLists(TileEntityInfo.CONVERTER).read(0);
 			}
 
-			public static void setTileEntitiesData(PacketContainer packet, List<InternalStructure> tileEntitiesData) {
+			public static void setTileEntitiesInfo(PacketContainer packet, List<InternalStructure> tileEntitiesInfo) {
 				assert isMapChunkPacket(packet);
-				packet.getStructures().read(0).getLists(TILE_ENTITY_CONVERTER).write(0, tileEntitiesData);
+				packet.getStructures().read(0).getLists(TileEntityInfo.CONVERTER).write(0, tileEntitiesInfo);
 			}
 
-			public static int getX(PacketContainer packet) {
-				return  packet.getIntegers().read(0);
+			public static int getChunkX(PacketContainer packet) {
+				return packet.getIntegers().read(0);
 			}
 
-			public static int getZ(PacketContainer packet) {
-				return  packet.getIntegers().read(1);
+			public static int getChunkZ(PacketContainer packet) {
+				return packet.getIntegers().read(1);
 			}
 
-			public static NbtBase<?> getTileEntityNBT(InternalStructure tileEntityData) {
-				return tileEntityData.getNbtModifier().read(0);
-			}
+			@SuppressWarnings("unchecked")
+			public static class TileEntityInfo {
 
-			public static int getTileEntityLocalX(InternalStructure tileEntityData) {
-				return  ((tileEntityData.getIntegers().read(0) >> 4) & 0xf);
-			}
-
-			public static int getTileEntityLocalZ(InternalStructure tileEntityData) {
-				return  (tileEntityData.getIntegers().read(0) & 0xf);
-			}
-
-			public static int getTileEntityY(InternalStructure tileEntityData) {
-				return tileEntityData.getIntegers().read(1);
-			}
-
-			public static InternalStructure cloneTileEntityDataWithNewNbt(InternalStructure tileEntityData, NbtCompound nbt) {
-				if (tile_entity_constructor == null) {
-					for (Constructor<?> c : tileEntityData.getHandle().getClass().getDeclaredConstructors()) {
-						if (c.getParameterCount() == 4) { // we are looking for the only constructor with 4 params
-							c.setAccessible(true);
-							tile_entity_constructor = c;
-							break;
-						}
-					}
-					if (tile_entity_constructor == null) {
-						throw new RuntimeException("Could not find the tile entity constructor");
+				private static final EquivalentConverter<InternalStructure> CONVERTER;
+				static {
+					try {
+						Field converterField = InternalStructure.class.getDeclaredField("CONVERTER");
+						converterField.setAccessible(true);
+						CONVERTER = (EquivalentConverter<InternalStructure>) converterField.get(null);
+					} catch (ReflectiveOperationException e) {
+						throw new RuntimeException("Could not get the tile entity info converter!", e);
 					}
 				}
-				try {
-					Object instance = tile_entity_constructor.newInstance(tileEntityData.getModifier().read(0), tileEntityData.getModifier().read(1), tileEntityData.getModifier().read(2), nbt.getHandle());
-					return TILE_ENTITY_CONVERTER.getSpecific(instance);
-				} catch (ReflectiveOperationException e) {
-					throw new RuntimeException("Could not invoke the tile entity constructor", e);
+
+				private static Constructor<?> CONSTRUCTOR; // Lazily initialized
+
+				private TileEntityInfo() {
+				}
+
+				// The x and y coordinates are stored compactly as: ((X & 15) << 4) | (Z & 15)
+				private static int getPackedXZ(InternalStructure tileEntityInfo) {
+					return tileEntityInfo.getIntegers().read(0);
+				}
+
+				public static int getLocalX(InternalStructure tileEntityInfo) {
+					return (getPackedXZ(tileEntityInfo) >> 4);
+				}
+
+				public static int getLocalZ(InternalStructure tileEntityInfo) {
+					return (getPackedXZ(tileEntityInfo) & 0xf);
+				}
+
+				public static int getY(InternalStructure tileEntityInfo) {
+					return tileEntityInfo.getIntegers().read(1);
+				}
+
+				private static Object getTileEntityType(InternalStructure tileEntityInfo) {
+					return tileEntityInfo.getModifier().read(2);
+				}
+
+				// Can be null
+				public static NbtCompound getNbt(InternalStructure tileEntityInfo) {
+					NbtBase<?> nbt = tileEntityInfo.getNbtModifier().read(0);
+					if (nbt == null) return null;
+					return NbtFactory.asCompound(nbt);
+				}
+
+				public static InternalStructure cloneWithNewNbt(InternalStructure tileEntityInfo, NbtCompound nbt) {
+					if (CONSTRUCTOR == null) {
+						for (Constructor<?> constructor : tileEntityInfo.getHandle().getClass().getDeclaredConstructors()) {
+							// We are looking for the only constructor with 4 parameters:
+							if (constructor.getParameterCount() == 4) {
+								constructor.setAccessible(true);
+								CONSTRUCTOR = constructor;
+								break;
+							}
+						}
+						if (CONSTRUCTOR == null) {
+							throw new RuntimeException("Could not find the tile entity info constructor!");
+						}
+					}
+
+					Object packedXZ = getPackedXZ(tileEntityInfo);
+					Object y = getY(tileEntityInfo);
+					Object tileEntityType = getTileEntityType(tileEntityInfo);
+					Object nmsNbt = nbt.getHandle();
+
+					try {
+						Object instance = CONSTRUCTOR.newInstance(packedXZ, y, tileEntityType, nmsNbt);
+						return CONVERTER.getSpecific(instance);
+					} catch (ReflectiveOperationException e) {
+						throw new RuntimeException("Could not invoke the tile entity info constructor!", e);
+					}
 				}
 			}
 		}
@@ -182,6 +209,12 @@ public class ProtocolUtils {
 			}
 
 			public static boolean isTileEntitySignData(NbtCompound tileEntityData) {
+				// TODO Some packets omit the TileEntity type id from the NBT data and instead store it separately in
+				// form of a BlockEntityType. Once ProtocolLib offers some kind of converter to represent
+				// BlockEntityType, all checks for whether some packet's tile entity data is a sign should be based on
+				// the BlockEntityType, and not the NBT data.
+				// String id = getId(tileEntityData);
+				// return id.equals("minecraft:sign");
 				return tileEntityData.containsKey("GlowingText");
 			}
 

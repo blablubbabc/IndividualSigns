@@ -22,7 +22,6 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.BlockPosition;
-import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 
@@ -99,30 +98,30 @@ class SignPacketListeners {
 		Player player = event.getPlayer();
 		World world = player.getWorld();
 
+		int chunkBlockX = ProtocolUtils.Packet.MapChunk.getChunkX(packet) * 16;
+		int chunkBlockZ = ProtocolUtils.Packet.MapChunk.getChunkZ(packet) * 16;
+
 		// Only replace the outgoing packet if needed:
 		PacketContainer outgoingPacket = null;
-		List<InternalStructure> outgoingTileEntitiesData = null;
+		List<InternalStructure> outgoingTileEntitiesInfo = null;
 		boolean removedSignData = false;
-		int chunkX = ProtocolUtils.Packet.MapChunk.getX(packet) * 16;
-		int chunkZ = ProtocolUtils.Packet.MapChunk.getZ(packet) * 16;
 
-		List<InternalStructure> tileEntitiesData = ProtocolUtils.Packet.MapChunk.getTileEntitiesData(packet);
-		for (int index = 0, size = tileEntitiesData.size(); index < size; index++) {
-			InternalStructure nmsTileEntityData = tileEntitiesData.get(index);
-			NbtBase<?> nbt = ProtocolUtils.Packet.MapChunk.getTileEntityNBT(nmsTileEntityData);
-			if (nbt == null) {
+		List<InternalStructure> tileEntitiesInfo = ProtocolUtils.Packet.MapChunk.getTileEntitiesInfo(packet);
+		for (int index = 0, size = tileEntitiesInfo.size(); index < size; index++) {
+			InternalStructure tileEntityInfo = tileEntitiesInfo.get(index);
+			NbtCompound tileEntityData = ProtocolUtils.Packet.MapChunk.TileEntityInfo.getNbt(tileEntityInfo);
+			if (tileEntityData == null) {
 				continue;
 			}
-			NbtCompound tileEntityData = NbtFactory.asCompound(nbt);
 
 			if (!ProtocolUtils.TileEntity.Sign.isTileEntitySignData(tileEntityData)) {
 				continue; // Ignore
 			}
 
 			// Call the SignSendEvent:
-			int x = ProtocolUtils.Packet.MapChunk.getTileEntityLocalX(nmsTileEntityData) + chunkX;
-			int z = ProtocolUtils.Packet.MapChunk.getTileEntityLocalZ(nmsTileEntityData) + chunkZ;
-			int y = ProtocolUtils.Packet.MapChunk.getTileEntityY(nmsTileEntityData);
+			int x = ProtocolUtils.Packet.MapChunk.TileEntityInfo.getLocalX(tileEntityInfo) + chunkBlockX;
+			int z = ProtocolUtils.Packet.MapChunk.TileEntityInfo.getLocalZ(tileEntityInfo) + chunkBlockZ;
+			int y = ProtocolUtils.Packet.MapChunk.TileEntityInfo.getY(tileEntityInfo);
 			Location location = new Location(world, x, y, z);
 			String[] rawLines = ProtocolUtils.TileEntity.Sign.getText(tileEntityData);
 
@@ -132,33 +131,33 @@ class SignPacketListeners {
 				// Prepare a new outgoing packet, if we didn't already create one:
 				if (outgoingPacket == null) {
 					outgoingPacket = packet.shallowClone();
-					// Copy the previous list of tile entity data (shallow copy):
-					outgoingTileEntitiesData = new ArrayList<>(tileEntitiesData);
-					// Use the new tile entities data list for the new outgoing packet:
-					ProtocolUtils.Packet.MapChunk.setTileEntitiesData(outgoingPacket, outgoingTileEntitiesData);
+					// Copy the previous list of tile entity info (shallow copy):
+					outgoingTileEntitiesInfo = new ArrayList<>(tileEntitiesInfo);
+					// Use the new tile entities info list for the new outgoing packet:
+					ProtocolUtils.Packet.MapChunk.setTileEntitiesInfo(outgoingPacket, outgoingTileEntitiesInfo);
 				}
 
 				if (signSendEvent.isCancelled()) {
-					// Remove the tile entity data for this sign from the outgoing packet:
-					// Mark the index for later removal by replacing the sign's tile entity data with null.
-					outgoingTileEntitiesData.set(index, null);
+					// Remove the tile entity info for this sign from the outgoing packet:
+					// Mark the index for later removal by replacing the sign's tile entity info with null.
+					outgoingTileEntitiesInfo.set(index, null);
 					removedSignData = true;
 				} else if (signSendEvent.isModified()) {
 					// Prepare the new sign data:
 					String[] newLines = signSendEvent.getLines();
 					NbtCompound outgoingSignData = replaceSignData(tileEntityData, newLines);
 
-					// Replace the old sign data with the new modified sign data in the new outgoing packet:
-					InternalStructure newTileEntityData = ProtocolUtils.Packet.MapChunk.cloneTileEntityDataWithNewNbt(nmsTileEntityData, outgoingSignData);
-					outgoingTileEntitiesData.set(index, newTileEntityData);
+					// Replace the old sign info with the new modified sign info in the new outgoing packet:
+					InternalStructure newTileEntityInfo = ProtocolUtils.Packet.MapChunk.TileEntityInfo.cloneWithNewNbt(tileEntityInfo, outgoingSignData);
+					outgoingTileEntitiesInfo.set(index, newTileEntityInfo);
 				}
 			}
 		}
 
 		if (outgoingPacket != null) {
 			if (removedSignData) {
-				// Remove marked (null) tile entity data entries:
-				Iterator<InternalStructure> iter = outgoingTileEntitiesData.iterator();
+				// Remove marked (null) tile entity info entries:
+				Iterator<InternalStructure> iter = outgoingTileEntitiesInfo.iterator();
 				while (iter.hasNext()) {
 					if (iter.next() == null) {
 						iter.remove();
