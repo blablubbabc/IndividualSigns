@@ -4,9 +4,11 @@ Date format: (YYYY-MM-DD)
 ## Next release
 ### Supported MC versions: xxx
 
-## v2.8.1 Release (TBA)
-### Supported MC versions: 1.17.1
-
+## v2.9.0 Release (TBA)
+### Supported MC versions: 1.18.1
+* Bumped the Bukkit dependency to Spigot 1.18.1. This version is not compatible with older Bukkit versions.
+* Bumped the ProtocolLib dependency to version 4.8.0.
+* Internal: Updated to Gradle 7.3.3.
 
 ## v2.8.0 Release (2021-08-08)
 ### Supported MC versions: 1.17.1
