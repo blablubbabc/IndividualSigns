@@ -60,12 +60,17 @@ class SignPacketListeners {
 	private void onTileEntityDataSending(PacketEvent event) {
 		PacketContainer packet = event.getPacket();
 		assert ProtocolUtils.Packet.TileEntityData.isTileEntityDataPacket(packet);
+		// TODO Identify the tile entity type here based on the BlockEntityType stored by the packet.
+		/*if (!ProtocolUtils.Packet.TileEntityData.isUpdateSignPacket(packet)) {
+			return; // Ignore
+		}*/
 
 		// Call the SignSendEvent:
 		Player player = event.getPlayer();
 		BlockPosition blockPosition = ProtocolUtils.Packet.TileEntityData.getBlockPosition(packet);
 		Location location = new Location(player.getWorld(), blockPosition.getX(), blockPosition.getY(), blockPosition.getZ());
 		NbtCompound signData = ProtocolUtils.Packet.TileEntityData.getTileEntityData(packet);
+		// TODO Identify the tile entity type based on the BlockEntityType stored by the packet.
 		if (!ProtocolUtils.TileEntity.Sign.isTileEntitySignData(signData)) {
 			return; // Ignore
 		}
@@ -114,6 +119,7 @@ class SignPacketListeners {
 				continue;
 			}
 
+			// TODO Identify the tile entity type based on the BlockEntityType stored by the tileEntityInfo.
 			if (!ProtocolUtils.TileEntity.Sign.isTileEntitySignData(tileEntityData)) {
 				continue; // Ignore
 			}
