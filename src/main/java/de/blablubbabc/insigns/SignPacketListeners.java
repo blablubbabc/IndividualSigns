@@ -126,8 +126,8 @@ class SignPacketListeners {
 
 			// Call the SignSendEvent:
 			int x = ProtocolUtils.Packet.MapChunk.TileEntityInfo.getLocalX(tileEntityInfo) + chunkBlockX;
-			int z = ProtocolUtils.Packet.MapChunk.TileEntityInfo.getLocalZ(tileEntityInfo) + chunkBlockZ;
 			int y = ProtocolUtils.Packet.MapChunk.TileEntityInfo.getY(tileEntityInfo);
+			int z = ProtocolUtils.Packet.MapChunk.TileEntityInfo.getLocalZ(tileEntityInfo) + chunkBlockZ;
 			Location location = new Location(world, x, y, z);
 			String[] rawLines = ProtocolUtils.TileEntity.Sign.getText(tileEntityData);
 
