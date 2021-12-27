@@ -4,7 +4,6 @@
  */
 package de.blablubbabc.insigns;
 
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -14,6 +13,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.plugin.Plugin;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Uses the {@link SignSendEvent} to replace a given fixed {@code key} within the sign text with a certain, potentially
@@ -39,12 +40,12 @@ public class SimpleChanger implements Listener {
 	 *            empty
 	 */
 	public SimpleChanger(Plugin plugin, String key, String permissionsNode) {
-		Validate.notNull(plugin, "plugin");
-		Validate.isTrue(plugin.isEnabled(), "plugin is not enabled");
-		Validate.notNull(key, "key");
-		Validate.isTrue(!key.isEmpty(), "key is empty");
-		Validate.notNull(permissionsNode, "permissionsNode");
-		Validate.isTrue(!permissionsNode.isEmpty(), "permissionsNode is empty");
+		Preconditions.checkNotNull(plugin, "plugin is null");
+		Preconditions.checkArgument(plugin.isEnabled(), "plugin is not enabled");
+		Preconditions.checkNotNull(key, "key is null");
+		Preconditions.checkArgument(!key.isEmpty(), "key is empty");
+		Preconditions.checkNotNull(permissionsNode, "permissionsNode is null");
+		Preconditions.checkArgument(!permissionsNode.isEmpty(), "permissionsNode is empty");
 
 		this.key = key;
 		this.permissionsNode = permissionsNode;

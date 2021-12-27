@@ -4,7 +4,6 @@
  */
 package de.blablubbabc.insigns;
 
-import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -17,12 +16,14 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
+import com.google.common.base.Preconditions;
+
 class PlayerListener implements Listener {
 
 	private final InSigns plugin;
 
 	PlayerListener(InSigns plugin) {
-		Validate.notNull(plugin, "plugin");
+		Preconditions.checkNotNull(plugin, "plugin is null");
 		this.plugin = plugin;
 	}
 

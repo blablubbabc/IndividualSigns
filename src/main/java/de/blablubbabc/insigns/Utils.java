@@ -7,7 +7,6 @@ package de.blablubbabc.insigns;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.Validate;
 import org.bukkit.Chunk;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -15,6 +14,8 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
+
+import com.google.common.base.Preconditions;
 
 /**
  * General utilities.
@@ -32,7 +33,7 @@ public final class Utils {
 	 * @return <code>true</code> if the material is a sign
 	 */
 	public static boolean isSign(Material material) {
-		Validate.notNull(material, "material");
+		Preconditions.checkNotNull(material, "material is null");
 		return (material.data == org.bukkit.block.data.type.Sign.class)
 				|| (material.data == org.bukkit.block.data.type.WallSign.class);
 	}
@@ -46,7 +47,7 @@ public final class Utils {
 	 * @return the sign's text color, not <code>null</code>
 	 */
 	public static DyeColor getSignTextColor(org.bukkit.block.Sign sign) {
-		Validate.notNull(sign, "sign");
+		Preconditions.checkNotNull(sign, "sign is null");
 		DyeColor color = sign.getColor(); // Can be null
 		return (color != null) ? color : DyeColor.BLACK; // Default: Black
 	}
@@ -60,8 +61,8 @@ public final class Utils {
 	 *            the sign, not <code>null</code>
 	 */
 	public static void sendSignUpdate(Player player, org.bukkit.block.Sign sign) {
-		Validate.notNull(player, "player");
-		Validate.notNull(sign, "sign");
+		Preconditions.checkNotNull(player, "player is null");
+		Preconditions.checkNotNull(sign, "sign is null");
 		player.sendSignChange(sign.getLocation(), sign.getLines(), getSignTextColor(sign), sign.isGlowingText());
 	}
 
@@ -82,11 +83,11 @@ public final class Utils {
 	 * @return the found block states, not <code>null</code>, but can be empty
 	 */
 	public static <T extends BlockState> List<T> getNearbyTileEntities(Location location, int chunkRadius, Class<T> type) {
-		Validate.notNull(location, "location");
+		Preconditions.checkNotNull(location, "location is null");
 		World world = location.getWorld();
-		Validate.notNull(world, "The location's world is null!");
-		Validate.notNull(type, "type");
-		Validate.isTrue(chunkRadius >= 0, "chunkRadius cannot be negative");
+		Preconditions.checkNotNull(world, "The location's world is null!");
+		Preconditions.checkNotNull(type, "type is null");
+		Preconditions.checkArgument(chunkRadius >= 0, "chunkRadius cannot be negative");
 
 		List<T> tileEntities = new ArrayList<>();
 		Chunk center = location.getChunk();

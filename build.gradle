@@ -27,6 +27,10 @@ repositories {
 configurations {
 	shade
 	compileClasspath.extendsFrom shade
+	implementation {
+		// There are plans to remove this library from Bukkit:
+		exclude group: 'commons-lang', module: 'commons-lang'
+	}
 }
 
 dependencies {

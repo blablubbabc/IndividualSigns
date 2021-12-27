@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.apache.commons.lang.Validate;
+import com.google.common.base.Preconditions;
 
 public final class ClassUtils {
 
@@ -27,7 +27,7 @@ public final class ClassUtils {
 	 * @return <code>true</code> on (potentially partial) success and <code>false</code> on failure
 	 */
 	public static boolean loadAllClassesFromJar(File jarFile, Predicate<String> filter, Logger logger) {
-		Validate.notNull(jarFile, "jarFile is null");
+		Preconditions.checkNotNull(jarFile, "jarFile is null");
 		if (filter == null) filter = (s) -> true;
 
 		try (ZipInputStream jar = new ZipInputStream(new FileInputStream(jarFile))) {

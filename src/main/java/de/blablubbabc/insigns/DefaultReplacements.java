@@ -4,10 +4,11 @@
  */
 package de.blablubbabc.insigns;
 
-import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import com.google.common.base.Preconditions;
 
 /**
  * The default sign text replacements.
@@ -18,7 +19,7 @@ final class DefaultReplacements {
 	}
 
 	static void register(Plugin plugin) {
-		Validate.notNull(plugin, "plugin");
+		Preconditions.checkNotNull(plugin, "plugin is null");
 
 		// [PLAYER] -> Player's name
 		// Permission: 'insigns.create.player'

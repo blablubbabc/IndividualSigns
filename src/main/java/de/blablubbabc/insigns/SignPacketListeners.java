@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -24,6 +23,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
+import com.google.common.base.Preconditions;
 
 /**
  * Packet listeners that are responsible for calling the {@link SignSendEvent} and replacing the outgoing sign contents
@@ -34,7 +34,7 @@ class SignPacketListeners {
 	private final InSigns plugin;
 
 	SignPacketListeners(InSigns plugin) {
-		Validate.notNull(plugin, "plugin");
+		Preconditions.checkNotNull(plugin, "plugin is null");
 		this.plugin = plugin;
 	}
 
