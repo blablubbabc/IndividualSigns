@@ -70,6 +70,11 @@ public class InSigns extends JavaPlugin {
 	public void onDisable() {
 	}
 
+	// Note: On newer versions of Minecraft, the chunk packets can often be sent to players with a delay of several
+	// ticks, so there is not much benefit anymore in sending these additional (and now earlier) sign updates. However,
+	// it is unclear whether the order and delay in which chunk packets are sent can non-deterministically fluctuate.
+	// Also, there is the possibility that these aspects of chunk sending will behave differently in future versions of
+	// Minecraft, or on different server derivatives. We therefore keep these additional sign updates for now.
 	public int getPlayerJoinSignUpdateDelay() {
 		return this.getConfig().getInt("player-join-sign-update-delay", 2);
 	}
