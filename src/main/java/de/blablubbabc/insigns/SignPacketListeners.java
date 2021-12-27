@@ -139,8 +139,6 @@ class SignPacketListeners {
 					outgoingPacket = packet.shallowClone();
 					// Copy the previous list of tile entity info (shallow copy):
 					outgoingTileEntitiesInfo = new ArrayList<>(tileEntitiesInfo);
-					// Use the new tile entities info list for the new outgoing packet:
-					ProtocolUtils.Packet.MapChunk.setTileEntitiesInfo(outgoingPacket, outgoingTileEntitiesInfo);
 				}
 
 				if (signSendEvent.isCancelled()) {
@@ -170,6 +168,9 @@ class SignPacketListeners {
 					}
 				}
 			}
+
+			// Apply the new tile entities info list to the new outgoing packet:
+			ProtocolUtils.Packet.MapChunk.setTileEntitiesInfo(outgoingPacket, outgoingTileEntitiesInfo);
 
 			// Replace the outgoing packet for the player:
 			event.setPacket(outgoingPacket);
