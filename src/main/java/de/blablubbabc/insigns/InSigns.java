@@ -4,7 +4,10 @@
  */
 package de.blablubbabc.insigns;
 
+import java.io.File;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -16,6 +19,10 @@ public class InSigns extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		// Load all plugin classes right away:
+		// This avoids class loading issues when the jar file is replaced while the plugin is still running.
+		this.loadAllPluginClasses();
+
 		// Register sign packet listeners:
 		new SignPacketListeners(this).register();
 
@@ -30,6 +37,16 @@ public class InSigns extends JavaPlugin {
 
 		// Update the nearby signs of all already online players:
 		this.updateNearbySignsOfOnlinePlayersDelayed();
+	}
+
+	private void loadAllPluginClasses() {
+		File pluginJarFile = this.getFile();
+		long startNanos = System.nanoTime();
+		boolean success = ClassUtils.loadAllClassesFromJar(pluginJarFile, className -> true, this.getLogger());
+		if (success) {
+			long durationMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
+			this.getLogger().info("Loaded all plugin classes (" + durationMillis + " ms).");
+		}
 	}
 
 	private void setupMetrics() {
