@@ -4,10 +4,7 @@
  */
 package de.blablubbabc.insigns;
 
-import java.util.List;
-
 import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -49,16 +46,8 @@ class PlayerListener implements Listener {
 	// Update nearby signs a short delay after a player joined.
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	void onPlayerJoin(PlayerJoinEvent event) {
-		int updateDelay = plugin.getPlayerJoinSignUpdateDelay();
-		if (updateDelay <= 0) return;
-
 		Player player = event.getPlayer();
-		Bukkit.getScheduler().runTaskLater(plugin, () -> {
-			if (!player.isOnline()) return;
-			List<Sign> nearbySigns = Utils.getNearbyTileEntities(player.getLocation(), Bukkit.getViewDistance(), Sign.class);
-			for (Sign sign : nearbySigns) {
-				Utils.sendSignUpdate(player, sign);
-			}
-		}, updateDelay);
+		int updateDelay = plugin.getPlayerJoinSignUpdateDelay();
+		plugin.updateNearbySignsDelayed(player, updateDelay);
 	}
 }

@@ -8,6 +8,7 @@ Date format: (YYYY-MM-DD)
 ### Supported MC versions: 1.18.1
 * Bumped the Bukkit dependency to Spigot 1.18.1. This version is not compatible with older Bukkit versions.
 * Bumped the ProtocolLib dependency to version 4.8.0.
+* Similar to how we update the nearby signs when a player joins the server, we now also update the nearby signs for players that are already online when the plugin is enabled.
 * Internal: Updated to Gradle 7.3.3.
 
 ## v2.8.0 Release (2021-08-08)
