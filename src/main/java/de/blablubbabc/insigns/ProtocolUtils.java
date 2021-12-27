@@ -20,17 +20,17 @@ import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 /**
  * Utilities for reading and writing packet contents.
  */
-public class ProtocolUtils {
+public final class ProtocolUtils {
 
 	private ProtocolUtils() {
 	}
 
-	public static class Packet {
+	public static final class Packet {
 
 		private Packet() {
 		}
 
-		public static class TileEntityData {
+		public static final class TileEntityData {
 
 			private TileEntityData() {
 			}
@@ -71,7 +71,7 @@ public class ProtocolUtils {
 			}
 		}
 
-		public static class MapChunk {
+		public static final class MapChunk {
 
 			private MapChunk() {
 			}
@@ -101,7 +101,7 @@ public class ProtocolUtils {
 			}
 
 			@SuppressWarnings("unchecked")
-			public static class TileEntityInfo {
+			public static final class TileEntityInfo {
 
 				private static final EquivalentConverter<InternalStructure> CONVERTER;
 				static {
@@ -178,7 +178,7 @@ public class ProtocolUtils {
 		}
 	}
 
-	public static class TileEntity {
+	public static final class TileEntity {
 
 		private TileEntity() {
 		}
@@ -203,7 +203,7 @@ public class ProtocolUtils {
 			return tileEntityData.getInteger("z");
 		}
 
-		public static class Sign {
+		public static final class Sign {
 
 			private Sign() {
 			}

@@ -19,7 +19,7 @@ import org.bukkit.entity.Player;
 /**
  * General utilities.
  */
-public class Utils {
+public final class Utils {
 
 	private Utils() {
 	}

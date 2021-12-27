@@ -12,7 +12,7 @@ import org.bukkit.plugin.Plugin;
 /**
  * The default sign text replacements.
  */
-class DefaultReplacements {
+final class DefaultReplacements {
 
 	private DefaultReplacements() {
 	}
