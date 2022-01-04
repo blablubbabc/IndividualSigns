@@ -5,7 +5,7 @@ authors: [blablubbabc]
 website: '${dboUrl}'
 description: '${description}'
 depend: [ProtocolLib]
-api-version: 1.17
+api-version: 1.18
 
 permissions:
   insigns.create.player:
