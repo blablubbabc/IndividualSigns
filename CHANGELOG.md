@@ -4,9 +4,13 @@ Date format: (YYYY-MM-DD)
 ## Next release
 ### Supported MC versions: xxx
 
-## v2.9.1 Release (TBA)
+## v2.9.2 Release (TBA)
 ### Supported MC versions: 1.18.1
 
+
+## v2.9.1 Release (2022-01-07)
+### Supported MC versions: 1.18.1
+* Fixed: We could encounter a NPE when we handle the TileEntityData packet. (Thanks to Brokkonaut)
 
 ## v2.9.0 Release (2022-01-04)
 ### Supported MC versions: 1.18.1
