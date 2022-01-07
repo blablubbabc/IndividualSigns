@@ -71,7 +71,7 @@ class SignPacketListeners {
 		Location location = new Location(player.getWorld(), blockPosition.getX(), blockPosition.getY(), blockPosition.getZ());
 		NbtCompound signData = ProtocolUtils.Packet.TileEntityData.getTileEntityData(packet);
 		// TODO Identify the tile entity type based on the BlockEntityType stored by the packet.
-		if (!ProtocolUtils.TileEntity.Sign.isTileEntitySignData(signData)) {
+		if (signData == null || !ProtocolUtils.TileEntity.Sign.isTileEntitySignData(signData)) {
 			return; // Ignore
 		}
 		String[] rawLines = ProtocolUtils.TileEntity.Sign.getText(signData);
