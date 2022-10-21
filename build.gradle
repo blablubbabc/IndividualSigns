@@ -54,7 +54,7 @@ processResources {
 		expand([
 			'version': project.version,
 			'description': project.description,
-			'dboUrl': project.dboUrl
+			'url': project.url
 		])
 	}
 }

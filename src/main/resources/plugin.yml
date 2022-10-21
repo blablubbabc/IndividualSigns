@@ -2,7 +2,7 @@ name: InSigns
 main: de.blablubbabc.insigns.InSigns
 version: '${version}'
 authors: [blablubbabc]
-website: '${dboUrl}'
+website: '${url}'
 description: '${description}'
 depend: [ProtocolLib]
 api-version: 1.18
