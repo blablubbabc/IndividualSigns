@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Chunk;
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -39,20 +38,6 @@ public final class Utils {
 	}
 
 	/**
-	 * Gets the sign's text color, or the default {@link DyeColor#BLACK} if no text color is explicitly set for the
-	 * sign.
-	 * 
-	 * @param sign
-	 *            the sign
-	 * @return the sign's text color, not <code>null</code>
-	 */
-	public static DyeColor getSignTextColor(org.bukkit.block.Sign sign) {
-		Preconditions.checkNotNull(sign, "sign is null");
-		DyeColor color = sign.getColor(); // Can be null
-		return (color != null) ? color : DyeColor.BLACK; // Default: Black
-	}
-
-	/**
 	 * Sends the a sign update packet for the given sign to the specified player.
 	 * 
 	 * @param player
@@ -63,7 +48,7 @@ public final class Utils {
 	public static void sendSignUpdate(Player player, org.bukkit.block.Sign sign) {
 		Preconditions.checkNotNull(player, "player is null");
 		Preconditions.checkNotNull(sign, "sign is null");
-		player.sendSignChange(sign.getLocation(), sign.getLines(), getSignTextColor(sign), sign.isGlowingText());
+		player.sendBlockUpdate(sign.getLocation(), sign);
 	}
 
 	/**

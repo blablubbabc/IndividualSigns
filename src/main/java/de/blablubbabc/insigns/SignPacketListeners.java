@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.PacketType;
@@ -74,9 +75,11 @@ class SignPacketListeners {
 		if (signData == null || !ProtocolUtils.TileEntity.Sign.isTileEntitySignData(signData)) {
 			return; // Ignore
 		}
-		String[] rawLines = ProtocolUtils.TileEntity.Sign.getText(signData);
+		// plugin.getLogger().severe("onTileEntityDataSending: " + packet.getBlockEntityTypeModifier().read(0).getKey().toString()); // why is this minecraft:furnace?
+		String[] rawLinesFront = ProtocolUtils.TileEntity.Sign.getText(Side.FRONT, signData);
+		String[] rawLinesBack = ProtocolUtils.TileEntity.Sign.getText(Side.BACK, signData);
 
-		SignSendEvent signSendEvent = plugin.callSignSendEvent(player, location, rawLines);
+		SignSendEvent signSendEvent = plugin.callSignSendEvent(player, location, rawLinesFront, rawLinesBack);
 
 		if (signSendEvent.isCancelled()) {
 			// Cancelled: Do not send the tile entity update packet.
@@ -86,8 +89,9 @@ class SignPacketListeners {
 			PacketContainer outgoingPacket = packet.shallowClone();
 
 			// Prepare the new sign data:
-			String[] newLines = signSendEvent.getLines();
-			NbtCompound outgoingSignData = replaceSignData(signData, newLines);
+			String[] newLinesFront = signSendEvent.getLines(Side.FRONT);
+			String[] newLinesBack = signSendEvent.getLines(Side.BACK);
+			NbtCompound outgoingSignData = replaceSignData(signData, newLinesFront, newLinesBack);
 
 			// Use the new modified sign data for the new outgoing packet:
 			ProtocolUtils.Packet.TileEntityData.setTileEntityData(outgoingPacket, outgoingSignData);
@@ -123,15 +127,17 @@ class SignPacketListeners {
 			if (!ProtocolUtils.TileEntity.Sign.isTileEntitySignData(tileEntityData)) {
 				continue; // Ignore
 			}
+			// plugin.getLogger().severe("onTileEntityDataSending: " + tileEntityInfo.getBlockEntityTypeModifier().read(0).getKey().getFullKey()); // why is this minecraft:furnace?
 
 			// Call the SignSendEvent:
 			int x = ProtocolUtils.Packet.MapChunk.TileEntityInfo.getLocalX(tileEntityInfo) + chunkBlockX;
 			int y = ProtocolUtils.Packet.MapChunk.TileEntityInfo.getY(tileEntityInfo);
 			int z = ProtocolUtils.Packet.MapChunk.TileEntityInfo.getLocalZ(tileEntityInfo) + chunkBlockZ;
 			Location location = new Location(world, x, y, z);
-			String[] rawLines = ProtocolUtils.TileEntity.Sign.getText(tileEntityData);
+			String[] rawLinesFront = ProtocolUtils.TileEntity.Sign.getText(Side.FRONT, tileEntityData);
+			String[] rawLinesBack = ProtocolUtils.TileEntity.Sign.getText(Side.BACK, tileEntityData);
 
-			SignSendEvent signSendEvent = plugin.callSignSendEvent(player, location, rawLines);
+			SignSendEvent signSendEvent = plugin.callSignSendEvent(player, location, rawLinesFront, rawLinesBack);
 
 			if (signSendEvent.isCancelled() || signSendEvent.isModified()) {
 				// Prepare a new outgoing packet, if we didn't already create one:
@@ -148,8 +154,9 @@ class SignPacketListeners {
 					removedSignData = true;
 				} else if (signSendEvent.isModified()) {
 					// Prepare the new sign data:
-					String[] newLines = signSendEvent.getLines();
-					NbtCompound outgoingSignData = replaceSignData(tileEntityData, newLines);
+					String[] newLinesFront = signSendEvent.getLines(Side.FRONT);
+					String[] newLinesBack = signSendEvent.getLines(Side.BACK);
+					NbtCompound outgoingSignData = replaceSignData(tileEntityData, newLinesFront, newLinesBack);
 
 					// Replace the old sign info with the new modified sign info in the new outgoing packet:
 					InternalStructure newTileEntityInfo = ProtocolUtils.Packet.MapChunk.TileEntityInfo.cloneWithNewNbt(tileEntityInfo, outgoingSignData);
@@ -186,7 +193,7 @@ class SignPacketListeners {
 	 *            the new sign text lines
 	 * @return the new sign data
 	 */
-	private NbtCompound replaceSignData(NbtCompound previousSignData, String[] newSignText) {
+	private NbtCompound replaceSignData(NbtCompound previousSignData, String[] newSignTextFront, String[] newSignTextBack) {
 		NbtCompound newSignData = NbtFactory.ofCompound(previousSignData.getName());
 
 		// Copy the previous tile entity data (shallow copy):
@@ -195,7 +202,7 @@ class SignPacketListeners {
 		}
 
 		// Replace the sign text:
-		ProtocolUtils.TileEntity.Sign.setText(newSignData, newSignText);
+		ProtocolUtils.TileEntity.Sign.setText(newSignData, newSignTextFront, newSignTextBack);
 
 		return newSignData;
 	}
