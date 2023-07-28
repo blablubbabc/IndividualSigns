@@ -7,7 +7,7 @@ package de.blablubbabc.insigns;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.List;
-
+import org.bukkit.block.sign.Side;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.InternalStructure;
 import com.comphenix.protocol.events.PacketContainer;
@@ -16,6 +16,7 @@ import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
+import com.comphenix.protocol.wrappers.nbt.NbtList;
 
 /**
  * Utilities for reading and writing packet contents.
@@ -215,26 +216,39 @@ public final class ProtocolUtils {
 				// the BlockEntityType, and not the NBT data.
 				// String id = getId(tileEntityData);
 				// return id.equals("minecraft:sign");
-				return tileEntityData.containsKey("GlowingText");
+				return tileEntityData.containsKey("front_text");
 			}
 
-			public static String[] getText(NbtCompound tileEntitySignData) {
+			public static String[] getText(Side side, NbtCompound tileEntitySignData) {
 				assert tileEntitySignData != null;
 				String[] lines = new String[4];
+				NbtCompound sideTextCompound = tileEntitySignData.getCompound(getSideCompoundName(side));
+				NbtList<String> messages = sideTextCompound.getList("messages");
 				for (int i = 0; i < 4; i++) {
-					String rawLine = tileEntitySignData.getString("Text" + (i + 1));
+					String rawLine = messages.getValue(i);
 					lines[i] = rawLine == null ? "" : rawLine;
 				}
 				return lines;
 			}
 
-			public static void setText(NbtCompound tileEntitySignData, String[] lines) {
+			public static void setText(NbtCompound tileEntitySignData, String[] linesFront, String[] linesBack) {
 				assert tileEntitySignData != null;
-				assert lines != null;
-				assert lines.length == 4;
-				for (int i = 0; i < 4; i++) {
-					tileEntitySignData.put("Text" + (i + 1), lines[i]);
+				assert linesFront != null;
+				assert linesFront.length == 4;
+				assert linesBack != null;
+				assert linesBack.length == 4;
+				for (Side side : Side.values()) {
+					NbtCompound sideTextCompound = tileEntitySignData.getCompound(getSideCompoundName(side));
+					sideTextCompound.put(NbtFactory.ofList("messages", side == Side.FRONT ? linesFront : linesBack));
 				}
+			}
+
+			private static String getSideCompoundName(Side side) {
+				return switch (side) {
+					case FRONT -> "front_text";
+					case BACK -> "back_text";
+					default -> throw new IllegalArgumentException("side");
+				};
 			}
 		}
 	}

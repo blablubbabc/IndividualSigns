@@ -7,6 +7,7 @@ package de.blablubbabc.insigns;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -91,17 +92,19 @@ public class SimpleChanger implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onSignSend(SignSendEvent event) {
 		String value = null;
-		for (int i = 0; i < 4; i++) {
-			String line = event.getLine(i);
-			if (line.contains(key)) {
-				if (value == null) {
-					value = this.getValue(event.getPlayer(), event.getLocation(), key);
-					// Ensure that the value is no longer null so that we request it at most once per sent sign:
+		for (Side side : Side.values()) {
+			for (int i = 0; i < 4; i++) {
+				String line = event.getLine(side, i);
+				if (line.contains(key)) {
 					if (value == null) {
-						value = "null";
+						value = this.getValue(event.getPlayer(), event.getLocation(), key);
+						// Ensure that the value is no longer null so that we request it at most once per sent sign:
+						if (value == null) {
+							value = "null";
+						}
 					}
+					event.setLine(side, i, line.replace(key, value));
 				}
-				event.setLine(i, line.replace(key, value));
 			}
 		}
 	}

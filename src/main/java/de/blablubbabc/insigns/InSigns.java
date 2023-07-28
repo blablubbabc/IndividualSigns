@@ -95,8 +95,8 @@ public class InSigns extends JavaPlugin {
 		}, delayTicks);
 	}
 
-	SignSendEvent callSignSendEvent(Player player, Location location, String[] rawLines) {
-		SignSendEvent signSendEvent = new SignSendEvent(player, location, rawLines);
+	SignSendEvent callSignSendEvent(Player player, Location location, String[] rawLinesFront, String[] rawLinesBack) {
+		SignSendEvent signSendEvent = new SignSendEvent(player, location, rawLinesFront, rawLinesBack);
 		Bukkit.getPluginManager().callEvent(signSendEvent);
 		return signSendEvent;
 	}
