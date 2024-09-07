@@ -4,9 +4,13 @@ Date format: (YYYY-MM-DD)
 ## Next release
 ### Supported MC versions: xxx
 
-## v2.9.2 Release (TBA)
-### Supported MC versions: 1.18.1
+## v2.9.3 Release (TBA)
+### Supported MC versions: 1.21.1 - 1.20.1
 
+## v2.9.2 Release (2024-09-08)
+### Supported MC versions: 1.21.1 - 1.20.1
+* Update for Spigot 1.20.1 and newer versions (Thanks to Brokkonaut). This version is not compatible with older Bukkit versions.
+* Build: Update to Gradle 8.5.
 
 ## v2.9.1 Release (2022-01-07)
 ### Supported MC versions: 1.18.1
